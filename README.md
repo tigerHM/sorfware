@@ -1,3 +1,2 @@
-# sorfware_self
+# sorfware
 常用软件
-仓库
