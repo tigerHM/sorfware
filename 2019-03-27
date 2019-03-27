@@ -1,7 +1,10 @@
 public class StringUtils2 {
         public static void main(String[] args) {
         String[] rf = readfile("");
-        
+        for (String s: rf){
+            System.out.println(s.trim());
+            //System.out.println(s.replaceAll("\\s*",""));
+        }
     }
 
     private static String[] readfile(String path) {
@@ -27,3 +30,6 @@ public class StringUtils2 {
     }
 }
 
+
+
+ES代码
