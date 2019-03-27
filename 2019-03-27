@@ -1,11 +1,10 @@
 public class StringUtils2 {
         public static void main(String[] args) {
-            StringBuilder readfile = readfile("C:\\Users\\hongmin\\Desktop\\aix.txt");
+        String[] rf = readfile("");
+        
+    }
 
-        }
-
-    private static StringBuilder readfile(String path) {
-        File file = new File(path);
+    private static String[] readfile(String path) {
         Reader reader=null;
         FileInputStream in = null;
         char[] tempchars = new char[1024];
@@ -15,26 +14,16 @@ public class StringUtils2 {
             reader = new InputStreamReader(new FileInputStream(path));
             // 读入多个字符到字符数组中，charread为一次读取字符数
             while ((charread = reader.read(tempchars)) != -1) {
-            // 同样屏蔽掉\r不显示
-            if ((charread == tempchars.length)
-                    && (tempchars[tempchars.length - 1] != '\r')) {
-                System.out.print(tempchars);
-            }
-            else {
-                for (int i = 0; i < charread; i++) {
-                    if (tempchars[i] == '\r') {
-                        continue;
-                    } else {
-                        System.out.print(tempchars[i]);
+                    for (int i = 0; i < charread; i++) {
+                        bd.append(tempchars[i]);
+                        }
                     }
-                }
-            }
-        }
         } catch (Exception e) {
             e.printStackTrace();
         }finally {
-            return bd;
+            String[] strings = bd.toString().split("," );
+            return strings;
         }
-
     }
 }
+
