@@ -15,7 +15,11 @@ output {
 /bin/logstash -f logstash-simple.conf
 
 实例2：获取日志文件过滤，实现使用multiline处理多行日志，实现只输出message
-pattern参数实现匹配下面格式的日志 ()：
+multiline 多行插件还有这几个属性：
+max_bytes:  默认值10M  对内容大小限制 
+max_lines: 默认值500   对行数进行限定
+multiline_tag: 事件标志表明该数据是多行任务的结果 默认是添加一个字段
+pattern:  实现正则匹配下面格式的日志 ()：
 lnx2219 | CHANGED => {
     "changed": true, 
     "rc": 0, 
@@ -41,6 +45,7 @@ input{
                 pattern => "(^[0-9a-zA-Z\_]+\s\|\s[A-Z]+\s=>\s)({\s\S+$})"
                 what => "previous"
                 negate => true
+		max_lines => 1000
         }
     }
 }
