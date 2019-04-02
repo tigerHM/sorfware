@@ -1,1 +1,80 @@
 #Logstash 配置细节
+官方文档：https://www.elastic.co/guide/en/logstash/current/plugins-inputs-file.html
+
+创建一个名为“logstash-simple.conf”的文件
+
+实例1.标准配置：
+input { stdin { } }
+output {
+  stdout { codec => rubydebug }
+}
+
+实现在控制台输入，控制台输出结果
+
+启动logstash命令：
+/bin/logstash -f logstash-simple.conf
+
+实例2：获取日志文件过滤，实现使用multiline处理多行日志，实现只输出message
+pattern参数实现匹配下面格式的日志 ()：
+lnx2219 | CHANGED => {
+    "changed": true, 
+    "rc": 0, 
+    "stderr": "Shared connection to lnx2219 closed.\r\n", 
+    ................................
+    "------JAVA------",
+        "java version \"1.7.0_09-icedtea\"", 
+        "OpenJDK Runtime Environment (rhel-2.3.4.1.el6_3-x86_64)", 
+        "OpenJDK 64-Bit Server VM (build 23.2-b09, mixed mode)", 
+        "------DB------",
+        "------Mid------",
+        "------END------"
+    ]
+}
+
+
+input{
+        file {
+        path => "/home/logs/*.log"
+        start_position => beginning
+        stat_interval => 5
+        codec => multiline {
+                pattern => "(^[0-9a-zA-Z\_]+\s\|\s[A-Z]+\s=>\s)({\s\S+$})"
+                what => "previous"
+                negate => true
+        }
+    }
+}
+output{
+   file {
+        path => "/home/data/%{+yyyy}/%{+MM}/%{+dd-HH}.log"
+		    codec => line { format => " message: %{message}"}//只输出message
+    }
+}
+
+
+实例3.日志文件中获取数据，输出到ES里
+input{
+        file {
+        path => "/home/logs/*.log"
+        start_position => beginning
+        stat_interval => 5
+        codec => multiline {
+                pattern => "(^[0-9a-zA-Z\_]+\s\|\s[A-Z]+\s=>\s)({\s\S+$})"
+                what => "previous"
+                negate => true
+        }
+    }
+}
+output {
+    elasticsearch {
+        host => “X.X.X.X“         # 或者cluster => “ClusterName“ 
+        protocol => "http"
+        index => "test_output-%{type}-%{+YYYY.MM.dd}"
+        document_type => "nginx"
+        workers => 5  
+	}
+}
+
+
+
+
