@@ -61,3 +61,8 @@ npm install -g grunt
 npm install
 插件安装完成
 
+ES的配置文件添加参数
+# 增加新的参数，这样head插件可以访问es。设置参数的时候:后面要有空格
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+
