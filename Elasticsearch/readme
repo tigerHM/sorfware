@@ -1,3 +1,38 @@
-#Elasticsearch
+#Elasticsearch(Linux上单机环境)
+
 1.安装配置
 下载安装包，解压
+
+添加用户组，用户（elasticsearch不允许root用户启动）
+groupadd elastic
+useradd -g elastic elastic -p 123456
+
+
+修改配置
+elasticsearch.yml：
+配置外网可以访问
+network.host: 0.0.0.0
+配置访问端口
+http.port: 9200
+
+sysctl.conf:
+vim /etc/sysctl.conf
+添加如下配置
+vm.max_map_count=262144
+让配置生效
+sysctl -p
+
+limits.conf:
+添加
+#*代表所有用户，也可以指定用户名elasticsearch
+* hard nofile 65536
+* soft nofile 65536
+* soft nproc 4096
+* hard nproc 4096
+
+90-nproc.conf :
+修改
+* soft nproc 4096
+
+更新配置文件
+启动Elasticsearch
