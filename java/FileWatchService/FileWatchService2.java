@@ -9,7 +9,7 @@ import java.util.Scanner;
 
 import static java.nio.file.StandardWatchEventKinds.*;
 /**
- * 使用监控器监视文件改变
+ * 使用监控器监视文件改变（监控目录次级目录下的文件变动监控不到）
  * 实时监控
  * @
  */
