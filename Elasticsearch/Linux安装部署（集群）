@@ -1,0 +1,32 @@
+Elasticsearch 分布式部署
+
+其它准备工作和单机安装大致相同;
+整个集群节点个数N要为奇数个。
+不同的是每一条机器需要单独配置elasticsearch.yml:
+
+# 集群名称，分布式部署，确保该名称唯一。
+ cluster.name: my-application
+ #节点名称
+ node.name: node-1
+ #节点绑定ip地址
+ network.host: 192.168.0.1
+ #为了避免脑裂，集群节点数最少为节点个数的半数+1
+ discovery.zen.minimum_master_nodes: 
+ #关闭自动发现节点
+ discovery.zen.ping.multicast.enabled: false
+ 
+节点属性:
+#是否参与选举
+#node.master: true
+#是否存储数据
+#node.data: true
+
+保证节点的名称，IP地址不同，其它配置相同。
+
+其它相关参数设置
+jvm.options
+# JVM最大、最小使用内存
+-Xms1g
+-Xmx1g
+
+ES依赖java,有两项最重要的-Xmx1g与-Xms1gJVM的最大最小内存。如果太小会导致Elasticsearch刚刚启动就立刻停止。太大会拖慢系统本身.
