@@ -1,0 +1,6 @@
+#该项目是spring boot2.x整合 ElaticSearch 5.6.16版本的demo
+
+需要主要的是当出现 springboot正常启动但访问页面出现whitelabel error page 404
+@ComponentScan(basePackages = {"com.*"})
+实现全路径扫描
+@ComponentScan只能实现当前目录及其子目录
