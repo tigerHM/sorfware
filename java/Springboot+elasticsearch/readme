@@ -1,6 +1,29 @@
 #该项目是spring boot2.x整合 ElaticSearch 5.6.16版本的demo
 
+常见spring  springboot注解分析
+
+@SpringBootApplication注释是相当于使用@Configuration， @EnableAutoConfiguration以及@ComponentScan与他们的默认属性；
+启动类的必备
+
 需要主要的是当出现 springboot正常启动但访问页面出现whitelabel error page 404
 @ComponentScan(basePackages = {"com.*"})
 实现全路径扫描
 @ComponentScan只能实现当前目录及其子目录
+
+@Configuration
+实现对配置文件的读取 替代.xml之类的配置文件
+
+@Autowired
+自动装配
+
+@Service
+标注业务层组件
+
+@Controller
+标注控制层组件
+
+@Component
+泛指组件
+
+@Repository
+用于标注数据访问组件，即DAO组件
