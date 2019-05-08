@@ -18,7 +18,7 @@ maven工程中读取配置文件
     public static Properties readProperties(String file) throws IOException{
         Properties properties = new Properties();
         InputStream inputStream = Resources.getResource("database.properties").openStream();
+        
         properties.load(inputStream);
-        System.out.println(properties.isEmpty());
         return properties;
     }
