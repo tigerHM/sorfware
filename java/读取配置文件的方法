@@ -1,0 +1,24 @@
+maven工程中读取配置文件   
+使用：
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>25.1-jre</version>
+        </dependency>
+     
+     /**
+     * 获取配置文件中的参数
+     * 
+     * 使用guava的Resources获取resources目录下的配置文件
+     * @param file
+     * @return
+     * @throws IOException
+     */
+    
+    public static Properties readProperties(String file) throws IOException{
+        Properties properties = new Properties();
+        InputStream inputStream = Resources.getResource("database.properties").openStream();
+        properties.load(inputStream);
+        System.out.println(properties.isEmpty());
+        return properties;
+    }
