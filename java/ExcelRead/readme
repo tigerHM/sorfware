@@ -33,3 +33,7 @@ maven项目需要导入以下依赖：
         </dependency>
 
 非maven工程直接导入jar包。
+
+
+
+hive 和 impala的JDBC测试类
