@@ -7,9 +7,11 @@ import java.util.List;
 
 public interface BookService {
 
-    Book findByid(ESindex es,String id);
+    String findByname(String name);
 
-    List<Book> findAll(ESindex es);
+    String findByauthor(String name);
+
+    String findAll();
 
     void insertOne(String index, String type,  String id,String jsonStr);
 

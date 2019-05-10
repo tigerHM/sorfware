@@ -3,9 +3,11 @@ package com.zhixin.util;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 空值判断工具类
+ */
 
 public class EmptyUtils {
-
     public static boolean isEmpty(Object s) {
         if (s == null) {
             return true;

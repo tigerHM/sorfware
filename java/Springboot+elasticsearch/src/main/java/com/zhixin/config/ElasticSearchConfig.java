@@ -13,10 +13,9 @@ import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.slf4j.Logger;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
@@ -95,6 +94,11 @@ public class ElasticSearchConfig {
                 .build();
     }
 
+
+    /**
+     * 该@PostConstruct
+     * 用于在依赖关系注入完成之后需要执行的方法上，以执行任何初始化。
+     */
     @PostConstruct
     void init() {
         System.setProperty("es.set.netty.runtime.available.processors", "false");
