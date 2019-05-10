@@ -34,3 +34,7 @@ ES依赖java,有两项最重要的-Xmx1g与-Xms1gJVM的最大最小内存。如�
 
 IK分词器的安装
 在https://github.com/medcl/elasticsearch-analysis-ik 上下载对应版本的分词器
+进入到安装目录的bin目录下：
+elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.16/elasticsearch-analysis-ik-5.6.16.zip
+
+启动测试；
