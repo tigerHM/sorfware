@@ -30,3 +30,7 @@ jvm.options
 -Xmx1g
 
 ES依赖java,有两项最重要的-Xmx1g与-Xms1gJVM的最大最小内存。如果太小会导致Elasticsearch刚刚启动就立刻停止。太大会拖慢系统本身.
+
+
+IK分词器的安装
+在https://github.com/medcl/elasticsearch-analysis-ik 上下载对应版本的分词器
