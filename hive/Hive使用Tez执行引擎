@@ -1,0 +1,67 @@
+Hive-3.1.1 + Tez-0.9.1配置
+参考自：http://www.vlambda.com/wz_x7bPOYmLaL.html
+
+在hive2以后和各版本中，启动hive命令行界面时，将给出以下提示：
+Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. 
+Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+可选的引擎为Spark或Tez。以下为Hive集成Tez的过程。
+
+1.下载tez
+https://mirrors.tuna.tsinghua.edu.cn/apache/tez/0.9.1/apache-tez-0.9.1-bin.tar.gz
+
+2.解压安装，替换tez的lib下的jar包
+将tez解压到集群的安装目录下：
+# tar -zxvf  apache-tez-0.9.1-bin.tar.gz  -C  /app/
+修改一下名称，否则太长了：
+# mv apache-tez-0.9.1-bin  tez-0.9.1
+替换hadoop的jar包：
+检查$TEZ_HOME/lib下的hadoop的两个jar包为
+Hadoop-mapreduce-client-core-2.7.0.jar
+Hadoop-mapreduce-client-common-2.7.0.jar
+而我们目前使用的hadoop为2.8.5，所以需要用hadoop中的包，替换tez下的包，以免发生冲突.
+
+3.配置tez-site.xml文件
+在$HADOOP_HOME/etc/hadoop目录下，添加tez-site.xml配置文件，内容如下：
+
+<configuration>
+<!--指定tez依赖的文件在hdfs上的位置，一会上传-->
+        <property>
+                <name>tez.lib.uris</name>
+                <value>hdfs://server21:8020/user/tez/tez.tar.gz</value>
+        </property>
+<!--指定tez所使用的最大的java内存比例-->
+        <property>
+                <name>tez.container.max.java.heap.fraction</name>
+                <value>0.2</value>
+        </property>
+</configuration>
+
+此配置文件，可以参考：TEZ_HOME/conf/tez-default.xml文件。
+
+4.上传tez.tar.gz
+上传gz文件：
+#hadoop dfs  -copyFromLocal  /app/tez-0.9.1/share/tez.tar.gz  /user/tez/tez.tar.gz
+
+5.配置环境变量
+新增tez的配置：
+export TEZ_CONF_DIR=$HADDOP_CONF_DIR
+export TEZ_HOME=/app/tez-0.9.1
+export TEZ_JARS=$TEZ_HOME/*:$TEZ_HOME/lib/*
+
+6.启动测试
+进程hive命令行：
+
+# hive
+Hive>
+设置hive所使用的引擎为tez：
+hive> set hive.execution.engine;
+hive.execution.engine=mr //查询默认为mr
+hive> set hive.execution.engine=tez;//设置为tez
+hive> set hive.execution.engine;
+hive.execution.engine=tez//再次查询已经转换成tez。
+
+如果不想每一次都设置，可以修改：hive-site.xml文件,添加以下配置：
+<property>
+    <name>hive.execution.engine</name>
+    <value>tez</value>
+</property>
