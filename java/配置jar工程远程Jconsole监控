@@ -13,6 +13,11 @@ Java JMX: Java管理扩展,即Java JMX（Java Management Extensions）
 
 如果是监控某些应用，比如tomcat这类：
 需在启动脚本中添加配置：catalina.sh
+
+if [ "$1" = "start" ];then
 JAVA_OPTS="-Djava.rmi.server.hostname=服务器的IP地址 -Dcom.sun.management.jmxremote.port=端口号 -Dcom.sun.management.jmxremote.rmi.port=端口号 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false"
+fi
+
+
 确保该端口不会被占用,并且将该端口放置白名单（或者关闭防火墙）。
 
