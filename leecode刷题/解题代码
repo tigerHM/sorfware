@@ -1,0 +1,24 @@
+1.验证回文字符串
+
+import com.google.common.base.CharMatcher;
+public class solution {
+
+        public static void main(String[] args) {
+
+//            String str="a .plicement;not A;BGI";
+            String str="A man, a plan, a canal: Panama";
+            String from = CharMatcher.JAVA_DIGIT.or(CharMatcher.JAVA_LOWER_CASE).or(CharMatcher.JAVA_UPPER_CASE).retainFrom(str).toLowerCase();
+            System.out.println(from);
+            System.out.println(ishuiwen(from));
+        }
+
+    private static boolean ishuiwen(String from) {
+
+        String str = new StringBuilder(from).reverse().toString();
+
+        return (str.equals(from))? true:false;
+    }
+
+}
+
+2.
