@@ -1,1 +1,97 @@
+hive 社区版配置用户名密码
 
+1.修改hive-site.xml
+找到：
+  <property>
+    <name>hive.server2.authentication</name>
+    <value>NONE</value>
+    <description>
+      Expects one of [nosasl, none, ldap, kerberos, pam, custom].
+      Client authentication types.
+        NONE: no authentication check
+        LDAP: LDAP/AD based authentication
+        KERBEROS: Kerberos/GSSAPI authentication
+        CUSTOM: Custom authentication provider
+                (Use with property hive.server2.custom.authentication.class)
+        PAM: Pluggable authentication module
+        NOSASL:  Raw transport
+    </description>
+  </property>
+将缺省值的NONE改为custom
+
+修改配置：
+原：<property>
+    <name>hive.server2.custom.authentication.class</name>
+    <value/>
+    <description>
+      Custom authentication class. Used when property
+      'hive.server2.authentication' is set to 'CUSTOM'. Provided class
+      must be a proper implementation of the interface
+      org.apache.hive.service.auth.PasswdAuthenticationProvider. HiveServer2
+      will call its Authenticate(user, passed) method to authenticate requests.
+      The implementation may optionally implement Hadoop's
+      org.apache.hadoop.conf.Configurable class to grab Hive's Configuration object.
+    </description>
+  </property>
+
+修改后：
+<property>
+  <name>hive.server2.custom.authentication.class</name>
+  <value>org.apache.hadoop.hive.contrib.auth.CustomPasswdAuthenticator</value>
+</property>
+
+2.编写自定义验证类：
+package org.apache.hadoop.hive.contrib.auth;
+ 
+import javax.security.sasl.AuthenticationException;
+
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hive.conf.HiveConf;
+import org.slf4j.Logger;
+ 
+public class CustomPasswdAuthenticator implements org.apache.hive.service.auth.PasswdAuthenticationProvider{
+	
+	private Logger LOG = org.slf4j.LoggerFactory.getLogger(CustomPasswdAuthenticator.class);
+	
+	private static final String HIVE_JDBC_PASSWD_AUTH_PREFIX="hive.jdbc_passwd.auth.%s";
+	
+	private Configuration conf=null;
+	
+	@Override
+	public void Authenticate(String userName, String passwd)  
+		      throws AuthenticationException {  
+		    LOG.info("user: "+userName+" try login.");  
+		    String passwdConf = getConf().get(String.format(HIVE_JDBC_PASSWD_AUTH_PREFIX, userName));  
+		    if(passwdConf==null){  
+		      String message = "user's ACL configration is not found. user:"+userName;  
+		      LOG.info(message);  
+		      throw new AuthenticationException(message);  
+		    }   
+		    if(!passwd.equals(passwdConf)){  
+		      String message = "user name and password is mismatch. user:"+userName;  
+		      throw new AuthenticationException(message);  
+		    }  
+		  }  
+	
+		  public Configuration getConf() {  
+		    if(conf==null){  
+		      this.conf=new Configuration(new HiveConf());  
+		    }  
+		    return conf;  
+		  }  
+		  
+		  public void setConf(Configuration conf) {  
+		    this.conf=conf;  
+		  }
+	
+}
+
+3.添加配置
+在hive-site.xml中
+添加：
+
+<property>
+    <name>hive.jdbc_passwd.auth.用户名</name>
+    <value>密码</value>
+    <description/>
+</property>
