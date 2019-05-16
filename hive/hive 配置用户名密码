@@ -95,3 +95,8 @@ public class CustomPasswdAuthenticator implements org.apache.hive.service.auth.P
     <value>密码</value>
     <description/>
 </property>
+
+
+CDH版hive 配置LDAP服务
+参考：https://cloud.tencent.com/developer/article/1078635
+
