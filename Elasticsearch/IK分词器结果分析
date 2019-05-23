@@ -35,7 +35,7 @@ http://192.168.4.16:9200/_analyze?analyzer=ik_smart&&text=我们的国家是一�
 {"token":"的","start_offset":10,"end_offset":11,"type":"CN_CHAR","position":6},
 {"token":"国家","start_offset":11,"end_offset":13,"type":"CN_WORD","position":7}]}
 
-使用ik-smart分词
+使用ik_max_word分词
 http://192.168.4.16:9200/_analyze?analyzer=ik_max_word&&text=我们的国家是一个伟大的国家。
 {"tokens":[{"token":"我们","start_offset":0,"end_offset":2,"type":"CN_WORD","position":0},
 {"token":"的","start_offset":2,"end_offset":3,"type":"CN_CHAR","position":1},
