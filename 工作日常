@@ -1,10 +1,8 @@
 jdk配置（Windows）
 classpath
 .;%java_home%\lib\dt.jar;%java_home%\lib\tools.jar
-
 java_home
 JDK安装路径
-
 Path
 %java_home%
 
