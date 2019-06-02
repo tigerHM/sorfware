@@ -1,0 +1,22 @@
+<?xml version="1.0"encoding="UTF-8"?>
+<!-- 文件名称不能乱改，须用默认的c3o0-config.xml -->
+<c3p0-config>
+    <default-config>
+        <property name="driverClass">com.mysql.jdbc.Driver</property>
+        <property name="user">root</property>
+        <property name="password">123456</property>
+        <property name="jdbcUrl">jdbc:mysql://127.0.0.1:3306/mydb2</property>
+
+        <property name="checkoutTimeout">30000</property>
+        <property name="idleConnectionTestPeriod">30</property>
+        <property name="initialPoolSize">10</property>
+        <property name="maxIdleTime">30</property>
+        <property name="maxIdleTimeExcessConnections">10</property>
+        <property name="maxConnectionAge">60</property>
+        <property name="propertyCycle">1</property>
+        <property name="maxPoolSize">25</property>
+        <property name="minPoolSize">5</property>
+
+    </default-config>
+
+</c3p0-config>
