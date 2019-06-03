@@ -9,6 +9,9 @@ import com.mchange.v2.c3p0.ComboPooledDataSource
   * @
   *
   */
+
+
+class JDBCpools {}
 object JDBCpools {
   private val pooledDataSource = new ComboPooledDataSource()
   private var connection: Connection = null
