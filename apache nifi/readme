@@ -11,3 +11,10 @@ NiFi采用Zero-Master Clustering范例。集群中的每个节点对数据执行
 集协调器，以获取最新流。如果群集协调器确定允许该节点加入（基于其配置的防火墙文件），则将当前流提供给该节点，并且该节点能够加入群集，假设节点的流副本与群
 集协调器提供的副本匹配。
 
+实例1.replaceText的使用
+通过正则表达式并将与正则表达式匹配的内容部分替换为某个备用值来更新FlowFile的内容。
+见：https://community.hortonworks.com/articles/57803/using-nifi-gettwitter-updateattributes-and-replace.html
+
+实例2：ConvertRecord的使用
+利用ConvertRecord处理器和Record Reader / Writer控制器服务的NiFI流程， 以便轻松地将CVS文件转换为JSON格式。此外，还修改了流程以将CSV文件转换为Avro和XML格式。
+见:https://community.hortonworks.com/articles/115311/convert-csv-to-json-avro-xml-using-convertrecord-p.html
