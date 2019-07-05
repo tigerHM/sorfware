@@ -18,3 +18,17 @@ NiFi采用Zero-Master Clustering范例。集群中的每个节点对数据执行
 实例2：ConvertRecord的使用
 利用ConvertRecord处理器和Record Reader / Writer控制器服务的NiFI流程， 以便轻松地将CVS文件转换为JSON格式。此外，还修改了流程以将CSV文件转换为Avro和XML格式。
 见:https://community.hortonworks.com/articles/115311/convert-csv-to-json-avro-xml-using-convertrecord-p.html
+
+实例3：利用PartitionRecord处理器和GrokReader / JSONWriter控制器服务以Grok格式解析NiFi应用程序日志，转换为JSON，
+然后按日志级别（INFO，WARN，ERROR）对输出进行分组。通过该实例可以借鉴配置grok 格式匹配fileflow进行解析的操作。
+见：https://community.hortonworks.com/articles/131320/using-partitionrecord-grokreaderjsonwriter-to-pars.html
+
+实例4：抽取关系型数据库如mysql等中的数据
+Apache NiFi有两个处理器，用于从关系数据库中提取行，您希望根据需要选择正确的行。
+ExecuteSQL  - 执行任意SQL语句并将结果作为一个FlowFile以Avro格式返回，包含所有结果记录。非常简单和灵活，适用于包括存储过程调用在内的广泛语句。专为通用目的而设计，没有增量提取的特定功能。 ExecuteSQL可以接受传入的FlowFiles，并且可以在表达式语言语句中使用FlowFile属性来生成SQL。
+QueryDatabaseTable  - 专为增量提取而设计。根据给定的表名和递增列计算SQL查询。维护NiFi状态数据，跟踪检索到的最后一个增量值。结果格式为Avro文件。
+GenerateTableFetch  -  NiFi 1.0.0中的新功能。可用于生成一系列分页查询语句以与ExecuteSQL一起使用，从而可以在可管理的块中查询非常大的数据集。
+如果您正在进行增量提取，尝试仅获取最新记录，则QueryDatabaseTable可能是您的处理器。如果需要将SQL语句自定义为单个输入FlowFiles，则ExecuteSQL是唯一的方法。如果您希望按计划运行例程查询，则ExecuteSQL可能更适合。
+需要用到DB Connection Service有两种：DBCPConnectionPool和HiveConnectionPool。抽取的是关系型数据库选择DBCPConnectionPool。
+在QueryDatabaseTable中有Maximum Number of Fragments属性配置增量字段。
+见：https://community.hortonworks.com/articles/51902/incremental-fetch-in-nifi-with-querydatabasetable.html
