@@ -22,15 +22,15 @@ vm.max_map_count=262144
 让配置生效
 sysctl -p
 
-limits.conf:
+vi /etc/security/limits.conf:
 添加
 #*代表所有用户，也可以指定用户名elasticsearch
 * hard nofile 65536
 * soft nofile 65536
-* soft nproc 4096
-* hard nproc 4096
+* soft nproc 65536
+* hard nproc 65536
 
-90-nproc.conf :
+/etc/security/limits.d/90-nproc.conf
 修改
 * soft nproc 4096
 
