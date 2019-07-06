@@ -3,7 +3,6 @@ Elasticsearch 分布式部署
 其它准备工作和单机安装大致相同;
 整个集群节点个数N要为奇数个。
 不同的是每一条机器需要单独配置elasticsearch.yml:
-
 # 集群名称，分布式部署，确保该名称唯一。
  cluster.name: my-application
  #节点名称
@@ -14,6 +13,10 @@ Elasticsearch 分布式部署
  discovery.zen.minimum_master_nodes: 
  #关闭自动发现节点
  discovery.zen.ping.multicast.enabled: false
+ 
+ 初始集群将集群内的节点名称配置(node.name)到该属性下使得机器能自动发现集群:
+ cluster.initial_master_nodes: 
+ 
  
 节点属性:
 #是否参与选举
@@ -38,3 +41,8 @@ IK分词器的安装
 elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.16/elasticsearch-analysis-ik-5.6.16.zip
 
 启动测试；
+
+检查集群节点情况:
+http://ip地址:9200/_cat/nodes
+检查集群健康状况:
+http://ip地址:9200_cluster/health?pretty
