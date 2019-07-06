@@ -15,7 +15,7 @@ Elasticsearch 分布式部署
  discovery.zen.ping.multicast.enabled: false
  
  初始集群将集群内的节点名称配置(node.name)到该属性下使得机器能自动发现集群:
- cluster.initial_master_nodes: 
+ cluster.initial_master_nodes: ["host1","host2",.......]
  
  
 节点属性:
