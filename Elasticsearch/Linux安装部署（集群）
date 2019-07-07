@@ -45,4 +45,4 @@ elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/
 检查集群节点情况:
 http://ip地址:9200/_cat/nodes
 检查集群健康状况:
-http://ip地址:9200_cluster/health?pretty
+http://ip地址:9200/_cluster/health?pretty
