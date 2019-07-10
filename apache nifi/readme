@@ -32,6 +32,7 @@ GenerateTableFetch  -  NiFi 1.0.0中的新功能。可用于生成一系列分�
 需要用到DB Connection Service有两种：DBCPConnectionPool和HiveConnectionPool。抽取的是关系型数据库选择DBCPConnectionPool。
 在QueryDatabaseTable中有Maximum Number of Fragments属性配置增量字段。
 见：https://community.hortonworks.com/articles/51902/incremental-fetch-in-nifi-with-querydatabasetable.html
+数据库迁移实例2：https://blog.pythian.com/database-migration-using-apache-nifi/
 
 
 实例5：
