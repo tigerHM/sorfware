@@ -1,6 +1,8 @@
 工作中日常使用的组件 
 Apache Ambari
 大数据组件管理框架
+
+节点添加：https://cwiki.apache.org/confluence/display/AMBARI/Add+a+host+and+deploy+components+using+APIs
 详细安装步骤：https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.5.2
 
 
