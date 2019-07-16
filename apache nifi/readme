@@ -38,3 +38,12 @@ GenerateTableFetch  -  NiFi 1.0.0中的新功能。可用于生成一系列分�
 
 
 实例5：
+
+
+
+Apache MiNiFi
+MiNiFi作为NiFi的子项目，是对NiFi数据流管理核心原则的扩展，聚焦于如何从数据产生的源头收集数据；MiNiFi解决了数据在产生源头和消费者之间相互传递和管理的困难，
+可以作为数字信号的“第一或最后一英里”，通过实现边缘设备智能(edge intelligence)来调整数据流的双向通信。
+官网：https://nifi.apache.org/minifi/index.html
+文章详解见：https://www.jianshu.com/p/45eba4ef8b62
+
