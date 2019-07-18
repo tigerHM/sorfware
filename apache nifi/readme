@@ -38,7 +38,9 @@ GenerateTableFetch  -  NiFi 1.0.0中的新功能。可用于生成一系列分�
 
 
 实例5：
-
+背景：由于部分老旧的收集服务还在运行，产生的数据落在版本较低的kafka0.8的集群，为实现能在高版本集群消费进行数据迁移。
+ConsumeKafka:
+PublishKafka_0_10(更高版本的生产者):
 
 
 Apache MiNiFi
