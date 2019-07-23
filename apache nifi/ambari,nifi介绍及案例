@@ -43,6 +43,16 @@ ConsumeKafka:
 PublishKafka_0_10(更高版本的生产者):
 
 
+实例6：数据从kafka中消费得到avro格式的，通过nifi转成csv格式
+使用到的处理器：
+ConsumeKafka_x_xx:从kafka消费数据主要配置kafka borkers,topic等信息。
+UpdateAttribute:为flowfile添加属性   添加配置项schema.name;value是AvroSchemaRegistry配置的名称.
+ConvertRecord:转换格式处理器；需要配置Record Reader;Record Writer.
+AvroSchemaRegistry:元数据格式仓库 添加配置在property配置名称，在value中配置avro的schema
+AvroReader:默认使用数据内置的schema 配置项中指定Schema Registry和writer一致。
+CSVRecordSetWriter:配置输出的csv相关配置情况  配置项中指定Schema Registry和reader一致;Value Separator用于指定csv的字段分割.
+
+
 Apache MiNiFi
 MiNiFi作为NiFi的子项目，是对NiFi数据流管理核心原则的扩展，聚焦于如何从数据产生的源头收集数据；MiNiFi解决了数据在产生源头和消费者之间相互传递和管理的困难，
 可以作为数字信号的“第一或最后一英里”，通过实现边缘设备智能(edge intelligence)来调整数据流的双向通信。
