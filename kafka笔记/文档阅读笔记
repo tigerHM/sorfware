@@ -1,0 +1,38 @@
+文档阅读笔记
+
+kafkat特点：
+high-throughput;handle low-latency delivery;support partitioned, distributed, real-time processing.
+
+1.Kafka在很大程度上依赖于文件系统来存储和缓存消息。
+
+2.消息格式
+baseOffset: int64
+batchLength: int32
+partitionLeaderEpoch: int32
+magic: int8 (current magic value is 2)
+crc: int32
+attributes: int16
+    bit 0~2:
+        0: no compression
+        1: gzip
+        2: snappy
+        3: lz4
+        4: zstd
+    bit 3: timestampType
+    bit 4: isTransactional (0 means not transactional)
+    bit 5: isControlBatch (0 means not a control batch)
+    bit 6~15: unused
+lastOffsetDelta: int32
+firstTimestamp: int64
+maxTimestamp: int64
+producerId: int64
+producerEpoch: int16
+baseSequence: int32
+records: [Record]
+
+3配置文件的Data Directories 属性用于配置kafka 数据的存储目录
+存放的是partion(目录) 命名规范是topic-数字  数字由分区情况决定。
+详细解释见：https://tech.meituan.com/2015/01/13/kafka-fs-design-theory.html
+
+3.java零拷贝
+https://developer.ibm.com/articles/j-zerocopy/
