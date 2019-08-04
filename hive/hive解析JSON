@@ -11,9 +11,40 @@ json数据中的字段最好不要含有特殊符号或者以特殊符号开头�
 建表语句:
 CREATE TABLE my_table(a string, b bigint, ...)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'STORED AS TEXTFILE;
 
+1.示例:
+json数据:
+{"sid":"123","name":"himw","hoppy":["music","book"]}
+{"sid":"421","name":"wak","hoppy":["music","foot bool"],"home":"sdna"}
+{"sid":"121","name":"jack","hoppy":["movie","foot bool"],"home":"sdna"}
+建表:TABLE my_table(id string, name string, hoppy array, home string)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+load  data local inpath "/.../..." into table 表名;
+查询结果:
+OK
+123	himw	["music","book"]	NULL
+421	wak	["music","foot bool"]	sdna
+121	jack	["movie","foot bool"]	sdna
+
 
 忽略掉格式错误的数据:
 ALTER TABLE my_table SET SERDEPROPERTIES ( "ignore.malformed.json" = "true");
 
 当你的json数据中包含hive关键字时，导入的数据会有问题，此时 SerDe可以使用SerDe属性将hive列映射到名称不同的属性:
 CREATE TABLE my_table(id string, name string, hoppy array, home string)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' WITH SERDEPROPERTIES ("mapping.hive字段名"="json字段名") STORED AS TEXTFILE;
+
+2.示例
+json数据:
+{"id":1,"name":"znk","course":{"chinese":"100","math":"80"}}
+{"id":2,"name":"sdx","course":{"chinese":"66","math":"58"}}
+{"id":3,"name":"sdf","course":{"chinese":"70","math":"90"}}
+
+建表:CREATE TABLE my_table7(id int, name string, course struct<chinese:string,math:string>)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+load  data local inpath "/.../..." into table 表名;
+查询全表:
+1	znk	{"yuwen":"100","shuxue":"80"}
+2	sdx	{"yuwen":"66","shuxue":"58"}
+3	sdf	{"yuwen":"70","shuxue":"90"}
+查询某个成绩:select course.math from 表名;
+OK
+80
+58
+90
