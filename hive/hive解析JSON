@@ -1,0 +1,19 @@
+HIVE
+hive的参考文档LanguageManual DML:
+https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DML#LanguageManualDML-Loadingfilesintotables
+
+关于hive怎么加载json数据建表使用在文档:
+https://cwiki.apache.org/confluence/display/Hive/LanguageManual+DDL
+
+json数据:每行必须是一个完整的JSON，一个JSON不能跨越多行.
+json数据中的字段最好不要含有特殊符号或者以特殊符号开头的字段名;如:_和$. 会导致该列字段无法读取被null处理.
+
+建表语句:
+CREATE TABLE my_table(a string, b bigint, ...)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe'STORED AS TEXTFILE;
+
+
+忽略掉格式错误的数据:
+ALTER TABLE my_table SET SERDEPROPERTIES ( "ignore.malformed.json" = "true");
+
+当你的json数据中包含hive关键字时，导入的数据会有问题，此时 SerDe可以使用SerDe属性将hive列映射到名称不同的属性:
+CREATE TABLE my_table(id string, name string, hoppy array, home string)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' WITH SERDEPROPERTIES ("mapping.hive字段名"="json字段名") STORED AS TEXTFILE;
