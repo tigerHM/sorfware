@@ -1,0 +1,7 @@
+目前 oracle、sql server、hive等均支持 with as 用法.用于将重复的查询结果复用。
+
+注意点：
+with as 最后必须跟sql语句结束，不允许单独使用。
+
+参考实例:
+https://blog.csdn.net/Abysscarry/article/details/81322669
