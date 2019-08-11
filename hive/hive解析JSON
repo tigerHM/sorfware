@@ -48,3 +48,35 @@ OK
 80
 58
 90
+
+
+
+在处理json数据字段长度不一致时,hive建表语句决定了对数据的处理情况.参考如下:
+3.示例
+json数据:
+{"id":1,"name":"znk","course":{"chinese":"100","math":"80"}}
+{"id":2,"name":"sdx","course":{"chinese":"66","math":"58"}}
+{"id":3,"name":"sdf","course":{"chinese":"70","math":"90","english":"79"}}
+
+建表A:CREATE TABLE my_table2 (id int, name string, course struct<chinese:string,math:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+查询结果:
+hive> select * from my_table2;
+OK
+1	znk	{"chinese":"100","math":"80"}
+2	sdx	{"chinese":"66","math":"58"}
+3	sdf	{"chinese":"70","math":"90"}
+
+在建表语句中,没有对字段englishd的定义,有该字段的数据则自动忽略了.
+
+建表B:CREATE TABLE my_table3 (id int, name string, course struct<chinese:string,math:string,english:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+查询结果:
+hive> select * from my_table3;
+OK
+1	znk	{"chinese":"100","math":"80","english":null}
+2	sdx	{"chinese":"66","math":"58","english":null}
+3	sdf	{"chinese":"70","math":"90","english":"79"}
+
+在第二个建表语句中,对english字段定义了,部分数据缺失该字段则自动填充为null.
+
+
+
