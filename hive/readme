@@ -12,3 +12,13 @@ hive 相关知识
 插入语句每一条添加：
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nostrick;
+
+
+默认情况下hive至启动一个reducer，所以要修改reducer的数量，可以通过设置强制分桶机制来保证reducer数量和桶的数量一致。 
+set hive.enforce.bucketing = true; 
+这个一定要改成true，hive就会根据桶的数量启动reducer数量。 
+hive桶表最大限度的保证了每个桶中的文件中的数据量大致相同，不会造成数据倾斜。
+参考hive分区表和桶表的比较:https://blog.csdn.net/db_guy/article/details/78742071
+
+
+
