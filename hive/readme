@@ -9,6 +9,7 @@ hive 相关知识
 
 报错：FAILED: SemanticException [Error 10096]: Dynamic partition strict mode requires at least one static partition column. To turn this off set hive.exec.dynamic.partition.mode=nonstrict
 
+启动动态分区功能
 插入语句每一条添加：
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nostrick;
