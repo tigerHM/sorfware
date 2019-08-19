@@ -14,6 +14,12 @@ hive 相关知识
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nostrick;
 
+不断有数据写入的表查询前对数据设置
+Hive会检测如果HDFS目录下存在但表的metastore中不存在的partition元信息，更新到metastore中
+修复分区：
+MSCK REPAIR TABLE table_name;
+
+
 
 默认情况下hive至启动一个reducer，所以要修改reducer的数量，可以通过设置强制分桶机制来保证reducer数量和桶的数量一致。 
 set hive.enforce.bucketing = true; 
