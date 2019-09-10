@@ -53,6 +53,32 @@ AvroReader:默认使用数据内置的schema 配置项中指定Schema Registry�
 CSVRecordSetWriter:配置输出的csv相关配置情况  配置项中指定Schema Registry和reader一致;Value Separator用于指定csv的字段分割.
 
 
+实例7:
+对flowfile中的数据进行一些处理:
+ExecuteScript:这个处理器可以使用其它类型的脚本语言对数据进行处理.
+本实例对数据中的某些字符进行替换,使用的Script Engine类型:ECMAScript(javascript),设置Script Body:
+var StreamCallback = Java.type("org.apache.nifi.processor.io.StreamCallback");
+var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+var StandardCharsets = Java.type("java.nio.charset.StandardCharsets");
+var flowfile = session.get();
+
+if (flowfile != null) {
+    try {
+        var outputStr = "";
+        flowfile = session.write(flowfile,
+            new StreamCallback(function (inputStream, outputStream) {
+                var inputStr = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+               	outputStr=inputStr.replace(/\n/g,"");
+                outputStream.write(outputStr.getBytes(StandardCharsets.UTF_8));
+            }));
+        session.transfer(flowfile, REL_SUCCESS);
+    } catch (e) {
+        log.error('Something went wrong' + e);
+        session.transfer(flowfile, REL_FAILURE);
+    }
+}
+运行的结果是对flowfile中的换行符替换为空.
+
 Apache MiNiFi
 MiNiFi作为NiFi的子项目，是对NiFi数据流管理核心原则的扩展，聚焦于如何从数据产生的源头收集数据；MiNiFi解决了数据在产生源头和消费者之间相互传递和管理的困难，
 可以作为数字信号的“第一或最后一英里”，通过实现边缘设备智能(edge intelligence)来调整数据流的双向通信。
