@@ -24,3 +24,35 @@ Bucket需要归属于某个Region，不是Global的。虽然S3的web console页�
 Bucket由附属的子资源(subresources)来定义bucket的配置.
 
 S3命名空间(Namespace):
+S3需要唯一的命名空间
+Bucket名字必须在AWS的整个S3生态中是唯一的,而不仅仅是只在Region中唯一。
+
+区域(Region)
+Region就是bucket实际存放的位置
+存放在某个Region的Object永远不会离开这个Region，除非你显式地将它传输出去.
+
+对象Object
+S3是一个可以存储近似无限数量Object的Key-Value存储系统
+Object包括如下元素:
+Key - object的名字
+Value - 存储的数据，大小范围是0~5TB
+Version ID - 当versioning功能开启后，每个Object都会拥有一个Version ID，用来区分有相同Key的不同的Object
+Bucket + Key + Version ID 三要素唯一定义了S3中的一个Object
+Metadata - 用来存储Object其他相关信息的Name-value键值对
+Subresources - 定义了一个Object的额外的资源
+Access Control Information - 控制每个对象的访问策略
+
+Object名字
+S3是平面结构的
+和文件系统不同，S3没有目录
+可以通过使用prefixed来模拟目录
+Object的键的名称是一序列的 Unicode 字符，它的 UTF-8 编码长度最大为 1024 个字节
+强烈建议Object的命名要符合DNS命名要求，采用如下字符集
+字母数字字符 [0-9a-zA-Z]和特殊字符 !、-、_、.、*、’、( 以及 )
+
+对象标签(Object Tagging)
+利用对象标签，您可以对存储进行分类。每个标签都是一个键-值对
+
+
+常用的aws S3 shell:
+官方文档https://docs.aws.amazon.com/zh_cn/cli/latest/reference/
