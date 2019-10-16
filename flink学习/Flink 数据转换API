@@ -1,0 +1,313 @@
+数据转换(Transformation)
+搬自:https://www.jianshu.com/p/fc4fb559d9f4
+
+数据处理的核心就是对数据进行各种转化操作，在Flink上就是通过转换将一个或多个DataStream转换成新的DataStream。
+为了更好的理解transformation函数，下面给出匿名类的方式来实现各个函数。
+所有转换函数都是依赖以下基础：
+
+StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+DataStream<String> dataStream = env.readTextFile("/opt/yjz/flink/flink-1.7.2/README.txt");
+
+基础转换操作
+Map
+接受一个元素，输出一个元素。MapFunction<T,V>中T代表输入数据类型(map方法的参数类型)，V代表操作结果输出类型(map方法返回数据类型)。
+
+dataStream.map(new MapFunction<String, String>() {
+    @Override
+    public String map(String line) throws Exception {
+        return line.toUpperCase();
+    }
+});
+flatMap
+输入一个元素，输出0个、1个或多个元素。FlatMapFunction<T,V>中T代表输入元素数据类型(flatMap方法的第一个参数类型)，V代表输出集合中元素类型(flatMap中的Collector类型参数)
+
+dataStream.flatMap(new FlatMapFunction<String, String>() {
+    @Override
+    public void flatMap(String line, Collector<String> collector) throws Exception {
+        for(String word : line.split(" "))
+        collector.collect(word);
+    }
+});
+转换前后数据类型：DataStream->DataStream。
+
+filter
+过滤指定元素数据，如果返回true则该元素继续向下传递，如果为false则将该元素过滤掉。FilterFunction<T>中T代表输入元素的数据类型。
+
+dataStream.filter(new FilterFunction<String>() {
+    @Override
+    public boolean filter(String line) throws Exception {
+        if(line.contains("flink"))
+            return true;
+        else
+            return false;
+    }
+});
+转换前后数据类型：DataStream->DataStream。
+
+keyBy
+逻辑上将数据流元素进行分区，具有相同key的记录将被划分到同一分区。指定Key的方式有多种，这个我们在之前说过了。返回类型KeyedStream<T,KEY>中T代表KeyedStream中元素数据类型，KEY代表虚拟KEY的数据类型。
+
+KeyedStream<String,Tuple> keyedStream = dataStream.keyBy(0);
+以下情况的元素不能作为key使用：
+
+POJO类型，但没有重写hashCode()，而是依赖Object.hashCode()。
+该元素是数组类型。
+keyBy内部使用散列来实现的。
+转换前后数据类型：DataStream->KeyedStream。
+
+reduce
+对指定的“虚拟”key相同的记录进行滚动合并，也就是当前元素与最后一次的reduce结果进行reduce操作。ReduceFunction<T>中的T代表KeyStream中元素的数据类型。
+
+keyedStream.reduce(new ReduceFunction<String>() {
+    @Override
+    public String reduce(String value1, String value2) throws Exception {
+        return value1 + value2;
+    }
+});
+转换前后数据类型：KeyedStream->DataStream。
+
+Fold(Deprecated)
+Fold功能和Reduce类似，但是Fold提供了初始值，从初始值开始滚动对相同的key记录进行滚动合并。FoldFunction<T,V>中的T为KeyStream中元素数据类型，V为初始值类型和fold方法返回值类型。
+
+keyedStream.fold(0, new FoldFunction<String, Integer>() {
+    @Override
+    public Integer fold(Integer accumulator, String value) throws Exception {
+        return accumulator + value.split(" ").length;
+    }
+});
+该方法已经标记为废弃！
+
+转换前后数据类型：KeyedStream->DataStream。
+
+Aggregations
+滚动聚合具有相同key的数据流元素，我们可以指定需要聚合的字段(field)。DataStream<T>中的T为聚合之后的结果。
+
+//对KeyedStream中元素的第一个Filed求和
+DataStream<String> dataStream1 = keyedStream.sum(0);
+//对KeyedStream中元素的“count”字段求和
+keyedStream.sum("count");
+//获取keyedStream中第一个字段的最小值
+keyedStream.min(0);
+//获取keyedStream中count字段的最小值的元素
+keyedStream.minBy("count");
+keyedStream.max("count");
+keyedStream.maxBy(0);
+min和minBy的区别是：min返回指定字段的最小值，而minBy返回最小值所在的元素。
+
+转换前后数据类型：KeyedStream->DataStream。
+
+window
+对已经分区的KeyedStream上定义窗口，Window会根据某些规则(比如在最后5s到达的数据)对虚拟“key”相同的记录进行分组。WindowedStream<T, K, W extends Window>中的T为KeyedStream中元素数据类型，K为指定Key的数据类型，W为我们所使用的窗口类型
+
+WindowedStream<String,Tuple,TimeWindow> windowedStream = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(5)));
+转换前后的数据类型：KeyedStream->WindowedStream
+
+关于Window之后会拿出来专门一篇文章来说。
+
+windowAll
+我们也可以在常规DataStream上使用窗口，Window根据某些条件(比如最后5s到达的数据)对所有流事件进行分组。AllWindowedStream<T,W extends Window>中的T为DataStream中元素的数据类型，W为我们所使用的窗口类型。
+
+AllWindowedStream<String,TimeWindow> allWindowedStream = dataStream.windowAll(TumblingEventTimeWindows.of(Time.seconds(5)));
+注意：该方法在许多时候并不是并行执行的，所有记录都会收集到一个task中
+
+转换前后的数据类型：DataStream->AllWindowedStream
+
+Window Apply
+将整个窗口应用在指定函数上，可以对WindowedStream和AllWindowedStream使用。WindowFunction<IN, OUT, KEY, W extends Window>中的IN为输入元素类型，OUT为输出类型元素，KEY为指定的key类型，W为所使用的窗口类型。
+
+windowedStream.apply(new WindowFunction<String, String, Tuple, TimeWindow>() {
+    @Override
+    public void apply(Tuple tuple, TimeWindow window, Iterable<String> input, Collector<String> out) throws Exception {
+        int sumCount = 0;
+        for(String line : input){
+            sumCount += line.split(" ").length;
+        }
+        out.collect(String.valueOf(sumCount));
+    }
+});
+AllWindowedStream使用与WindowedStream类似。
+
+转换前后的数据类型：WindowedStream->DataStream或AllWindowedStream->DataStream
+
+Window Reduce/Fold/Aggregation/
+对于WindowedStream数据流我们同样也可以应用Reduce、Fold、Aggregation函数。
+
+windowedStream.reduce(new ReduceFunction<String>() {
+    @Override
+    public String reduce(String value1, String value2) throws Exception {
+        return value1 + value2;
+    }
+});
+windowedStream.fold(0, new FoldFunction<String, Integer>() {
+    @Override
+    public Integer fold(Integer accumulator, String value) throws Exception {
+        return accumulator + value.split(" ").length;
+    }
+});
+windowedStream.sum(0);
+windowedStream.max("count");
+转换前后的数据类型：WindowedStream->DataStream
+
+Union
+联合(Union)两个或多个DataStream，所有DataStream中的元素都会组合成一个新的DataStream。如果联合自身，则每个元素出现两次在新的DataStream。
+
+dataStream.union(dataStream1);
+转换前后的数据类型：DataStream*->DataStream
+
+Window Join
+在指定key的公共窗口上连接两个数据流。JoinFunction<IN1,IN2,OUT>中的IN1为第一个DataStream中元素数据类型，IN2为第二个DataStream中元素数据类型，OUT为Join结果数据类型。
+
+dataStream
+          .join(dataStream1)
+          .where(new MyKeySelector()).equalTo(new MyKeySelector())
+          .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+          .apply(new JoinFunction<String, String, String>() {
+              @Override
+              public String join(String first, String second) throws Exception {
+                  return first + second;
+              }
+          });
+转换前后的数据类型：DataStream,DataStream->DataStream
+
+Interval Join
+对指定的时间间隔内使用公共key来连接两个KeyedStream。ProcessJoinFunction<IN1,IN2,OUT>中IN1为第一个DataStream中元素数据类型，IN2为第二个DataStream中的元素数据类型，OUT为结果输出类型。
+
+ keyedStream
+            .intervalJoin(keyedStream)
+            .between(Time.milliseconds(-2),Time.milliseconds(2))//间隔时间
+            .lowerBoundExclusive()//并不包含下限时间
+            .upperBoundExclusive()
+            .process(new ProcessJoinFunction<String, String, String>() {
+                @Override
+                public void processElement(String left, String right, Context ctx, Collector<String> out) throws Exception {
+                    //...
+                }
+            });
+Window CoGroup
+对两个指定的key的DataStream在公共窗口上执行CoGroup，和Join功能类似，但是更加灵活。CoGroupFunction<IN1,IN2,OUT>，IN1代表第一个DataStream中元素类型，IN2代表第二个DataStream中元素类型，OUT为结果输出集合类型。
+
+dataStream
+          .coGroup(dataStream1)
+          .where(new MyKeySelector()).equalTo(new MyKeySelector())
+          .window(TumblingEventTimeWindows.of(Time.seconds(5)))
+          .apply(new CoGroupFunction<String, String, String>() {
+              @Override
+              public void coGroup(Iterable<String> first, Iterable<String> second, Collector<String> out) throws Exception {
+
+              }
+          });
+转换前后的数据类型：DataStream,DataStream->DataStream
+
+Connect
+连接(connect)两个流，并且保留其类型。两个数据流之间可以共享状态。ConnectedStreams<IN1,IN2>中IN1代表第一个数据流中的数据类型，IN2代表第二个数据流中的数据类型。
+
+ConnectedStreams<String,String> connectedStreams = dataStream.connect(dataStream);
+转换前后的数据类型：DataStream,DataStream->ConnectedDataStreams
+
+CoFlatMap/CoMap
+可以对连接流执行类似map和flatMap操作。
+
+connectedStreams.map(new CoMapFunction<String, String, String>() {
+            @Override
+            public String map1(String value) throws Exception {
+                return value.toUpperCase();
+            }
+            @Override
+            public String map2(String value) throws Exception {
+                return value.toLowerCase();
+            }
+        });
+转换前后的数据类型：ConnectedDataStreams->DataStream
+
+Split(Deprecated)
+我们可以根据某些规则将数据流切分成两个或多个数据流。
+
+dataStream.split(new OutputSelector<String>() {
+            @Override
+            public Iterable<String> select(String value) {
+                List<String> outList = new ArrayList<>();
+                if(value.contains("flink"))
+                    outList.add("flink");
+                else 
+                    outList.add("other");
+                return outList;
+            }
+        });
+该方法底层引用以被标记为废弃！
+
+转换前后的数据类型：DataStream->SplitStream
+
+Select
+我们可以对SplitStream分开的流进行选择，可以将其转换成一个或多个DataStream。
+
+splitStream.select("flink");
+splitStream.select("other");
+Extract Timestamps(Deprecated)
+从记录中提取时间戳，以便使用事件时间语义窗口。之后会专门来看Flink的Event Time。
+
+dataStream.assignTimestamps(new TimestampExtractor<String>() {
+            @Override
+            public long extractTimestamp(String element, long currentTimestamp) {
+                return 0;
+            }
+            @Override
+            public long extractWatermark(String element, long currentTimestamp) {
+                return 0;
+            }
+            @Override
+            public long getCurrentWatermark() {
+                return 0;
+            }
+        });
+该方法以被标记为废弃！
+
+转换前后的数据类型：DataStream->DataStream
+
+Iterate
+可以使用iterate方法来获取IterativeStream。
+
+IterativeStream<String> iterativeStream = dataStream.iterate();
+转换前后的数据类型：DataStream->IterativeStream
+
+Project
+对元组类型的DataStream可以使用Project选取子元组。
+
+DataStream<Tuple2<String,Integer>> dataStream2 = dataStream.project(0,2);
+转换前后的数据类型：DataStream->DataStream
+
+自定义分区(partitionCustom)
+使用用户自定义的分区函数对指定key进行分区，partitionCustom只支持单分区。
+
+dataStream.partitionCustom(new Partitioner<String>() {
+            
+            @Override
+            public int partition(String key, int numPartitions) {
+                return key.hashCode() % numPartitions;
+            }
+        },1);
+转换前后的数据类型：DataStream->DataStream
+
+随机分区(shuffle)
+均匀随机将元素进行分区。
+
+dataStream.shuffle();
+转换前后的数据类型：DataStream->DataStream
+
+rebalance
+以轮询的方式为每个分区均衡分配元素，对于优化数据倾斜该方法非常有效。
+
+dataStream.rebalance();
+转换前后的数据类型：DataStream->DataStream
+
+broadcast
+使用broadcast可以向每个分区广播元素。
+
+dataStream.broadcast();
+转换前后的数据类型：DataStream->DataStream
+
+rescale
+根据上下游task数进行分区。
+
+rescale
+dataStream.rescale();
+转换前后的数据类型：DataStream->DataStream
