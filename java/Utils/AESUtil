@@ -6,7 +6,8 @@ import org.apache.commons.codec.binary.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Security;
- 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 /**
  * AES加密算法util
  * Created by steadyjack on 2018/4/21.
