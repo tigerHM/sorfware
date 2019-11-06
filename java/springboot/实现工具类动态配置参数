@@ -145,4 +145,114 @@ public class AESUtil {
 
 
 但是在多种数据上传不同业务采用不同的SecretKey进行加密时无法做到动态调整.
-所以使用
+所以使用下面这种方式:
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.*;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+
+public class AESUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(AESUtil.class);
+    private static final String AES_TRANSFOMATION = "AES/ECB/PKCS5Padding";
+    private static Key DATA_KEY;
+    private ThreadLocal<Cipher> dataEncryptCipher;
+    private ThreadLocal<Cipher> dataDecryptCipher;
+
+    public AESUtil(String key) {
+        DATA_KEY = toKey(key);
+        dataEncryptCipher = new ThreadLocal<Cipher>() {
+            protected Cipher initialValue() {
+                Cipher cipher = null;
+                try {
+                    cipher = Cipher.getInstance(AES_TRANSFOMATION);
+                    cipher.init(Cipher.ENCRYPT_MODE, DATA_KEY);
+                } catch (GeneralSecurityException e) {
+                }
+                return cipher;
+            }
+        };
+
+        dataDecryptCipher = new ThreadLocal<Cipher>() {
+            protected Cipher initialValue() {
+                Cipher cipher = null;
+                try {
+                    cipher = Cipher.getInstance(AES_TRANSFOMATION);
+                    cipher.init(Cipher.DECRYPT_MODE, DATA_KEY);
+                } catch (GeneralSecurityException e) {
+                }
+                return cipher;
+            }
+        };
+    }
+
+    public Key toKey(String key) {
+        SecretKey secretKey = new SecretKeySpec(key.getBytes(), "AES");
+        return secretKey;
+    }
+
+    public byte[] encryptData(byte[] data) throws Exception {
+        return dataEncryptCipher.get().doFinal(data);
+    }
+
+    public byte[] decryptData(byte[] data) throws Exception {
+        return dataDecryptCipher.get().doFinal(data);
+    }
+
+    /**
+     * 文件加密
+     *
+     * @param sourceFile
+     * @param encrypfile
+     * @param
+     * @return
+     */
+    public File encryptFile(File sourceFile, File encrypfile) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(sourceFile);
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            byte[] encrypt = encryptData(bytes);
+            outputStream = new FileOutputStream(encrypfile);
+            outputStream.write(encrypt);
+            inputStream.close();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return encrypfile;
+    }
+
+
+    /**
+     * AES方式解密文件
+     *
+     * @param sourceFile  要解密的文件路径
+     * @param decryptFile 解密后的文件路径
+     * @param
+     * @return
+     */
+    public File decryptFile(File sourceFile, File decryptFile) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        try {
+            inputStream = new FileInputStream(sourceFile);
+            byte[] bytes = IOUtils.toByteArray(inputStream);
+            byte[] decrypt = decryptData(bytes);
+            outputStream = new FileOutputStream(decryptFile);
+            outputStream.write(decrypt);
+            inputStream.close();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return decryptFile;
+    }
+}
+
