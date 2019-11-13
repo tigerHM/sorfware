@@ -7,6 +7,7 @@
 这样筛选下来，符合条件的队列就只有ArrayBlockingQueue。
 ArrayBlockingQueue在实际使用过程中，会因为加锁和伪共享等出现严重的性能问题，我们下面来分析一下。
 
+在高度竞争的情况下，锁的性能将超过原子变量的性能，但是更真实的竞争情况下，原子变量的性能将超过锁的性能。同时原子变量不会有死锁等活跃性问题。
 
 项目maven依赖:
 <!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
