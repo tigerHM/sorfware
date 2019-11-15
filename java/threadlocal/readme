@@ -1,0 +1,76 @@
+最近在项目代码中看到Threadlocal的使用,于是找了些资料.
+摘抄来源:https://juejin.im/post/5ac2eb52518825555e5e06ee
+
+什么是Threadlocal?
+ThreadLocal提供了线程的局部变量，每个线程都可以通过set()和get()来对这个局部变量进行操作，但不会和其他线程的局部变量进行冲突，实现了线程的数据隔离。
+简要言之：往ThreadLocal中填充的变量属于当前线程，该变量对其他线程而言是隔离的。
+
+应用场景:
+1.管理Connection
+频繁创建和关闭Connection是一件非常耗费资源的操作，因此需要创建数据库连接池.
+
+2.避免一些参数传递
+
+实现原理:
+ThreadLocalMap是ThreadLocal的一个内部类。用Entry类来进行存储我们的值都是存储到这个Map上的，key是当前ThreadLocal对象！
+
+
+本人项目中AES加密类需要传入不同的参数,并且Cipher初始化后需要在内存中保存持续使用
+
+依赖pom:slf4j
+
+public class AESUtils{
+    private static final Logger log =LoggerFactory.getLogger(AESUtils.class)
+    private static final ThreadLocal <Cipher> DATA_ENCRYPT_CIPHER = new ThreadLocal<>();
+    private static final ThreadLocal <Cipher> DATA_DECRYPT_CIPHER = new ThreadLocal<>();
+    //加密模式
+    private static final String AES_MODE = "AES/ECB/PKCS5Padding";
+    
+    //加密数据
+    public static byte[] encrypt(String originalData, String key) throws Exception{
+        Cipher cipher = getEnCipher(key);
+        return cipher.doFinal(originalData.getBytes());
+    }
+    
+    public static byte[] encrypt(byte[] originalData, String key) throws Exception{
+        Cipher cipher = getEnCipher(key);
+        return cipher.doFinal(originalData);
+    }
+    
+    //解密数据
+    public static byte[] decrypt(byte[] encryptedData,String key) throws Exception{
+        Cipher cipher =getDeCipher(key);
+        return cipher.doFinal(encryptedData);
+    } 
+    
+    private static Cipher getEnCipher(String key){
+        Cipher cipher = DATA_ENCRYPT_CIPHER.get();
+        if(null == cipher){
+            try{
+                SecretKey secretKey = new SecretKeySpec(key.getBytes(),"AES");
+                cipher = Cipher.getInstance(AES_MODE);
+                cipher.init(Cipher.ENCRYPT_MODE,secretKey);
+                DATA_ENCRYPT_CIPHER.set(cipher);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        ruturn cipher;
+    }
+    
+    private static Cipher getDeCipher(String key){
+        Cipher cipher = DATA_DECRYPT_CIPHER.get();
+        if(null == cipher){
+            try{
+                SecretKey secretKey = new SecretKeySpec(key.getBytes(),"AES");
+                cipher = Cipher.getInstance(AES_MODE);
+                cipher.init(Cipher.DECRYPT_MODE,secretKey);
+                DATA_ENCRYPT_CIPHER.set(cipher);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+        ruturn cipher;
+    }
+
+}
