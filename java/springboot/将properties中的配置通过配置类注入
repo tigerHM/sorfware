@@ -1,0 +1,7 @@
+通常我们在Applicationconfig注入相关的配置类:
+在本实例中主要使用:@Bean, @ConfigrationProperties
+
+@ConfigrationProperties 的使用参考:https://juejin.im/post/5c1a1a3c5188254a4313c7a3
+参数 prefix = 用于配置.properties或者yml文件的前缀:
+@ConfigrationProperties("demo.test") 会将所有demo.test.xxxx注入到配置类中.
+主要事项:xxxx必须和配置类的参数名一致
