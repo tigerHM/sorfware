@@ -1,0 +1,7 @@
+spring boot整合日志框架:
+参考来源:
+https://juejin.im/post/5abc3bc0f265da237b2227e7
+http://tengj.top/2017/04/05/springboot7/
+
+
+log4j,logback是常用的日志框架.
