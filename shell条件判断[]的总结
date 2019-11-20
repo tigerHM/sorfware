@@ -34,3 +34,24 @@ int1 -le int2　　　　int1小于等于int2为真
 -a 　 　　　　　 与
 -o　　　　　　　 或
 !　　　　　　　　非
+
+shell中的数组:
+参考来源:http://blog.leanote.com/post/gaunthan/%E6%95%B0%E7%BB%84
+
+
+Shell  数组操作方式
+数组元素个数  ${#array[@]} 
+数组的所有元素  ${array[*]} 
+字符串长度      ${#str}
+
+
+对数组中的元素去重:
+array=($(echo ${array[*]} | sed 's/ /\n/g'|sort | uniq))
+另一方法,参考:https://blog.csdn.net/hardwin/article/details/6826890
+
+
+判断文件是否带后缀:
+if [ "${file##*.}"x = "tmp"x ];then
+    echo $file
+fi
+使用了贪婪匹配用法
