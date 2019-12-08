@@ -1,0 +1,7 @@
+sqoop使用
+官网介绍：
+Sqoop是一种旨在在Hadoop与关系数据库或大型机之间传输数据的工具。您可以使用Sqoop将数据从MySQL或Oracle等关系数据库管理系统（RDBMS）或大型机导入Hadoop分布式文件系统（HDFS），在Hadoop MapReduce中转换数据，然后将数据导出回RDBMS 。
+Sqoop依靠数据库描述要导入的数据的模式来自动执行此过程的大部分时间。Sqoop使用MapReduce导入和导出数据，这提供了并行操作以及容错能力。
+
+案例参考文档：
+https://blog.csdn.net/qq_36881881/article/details/88887243
