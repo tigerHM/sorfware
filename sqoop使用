@@ -5,3 +5,10 @@ Sqoop依靠数据库描述要导入的数据的模式来自动执行此过程的
 
 案例参考文档：
 https://blog.csdn.net/qq_36881881/article/details/88887243
+
+
+示例1:
+将数据全量抽取到aws S3同时自定义输出文件名:
+sqoop import -D mapreduce.output.basename=`date +%Y-%m-%d` \
+--connect xxxx --username xxxx --password xxxx --table Test --target-dir s3a://xxxx桶名/xxxx --fields-terminated-by ',' -m 1
+
