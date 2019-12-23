@@ -73,3 +73,11 @@ fi
     #读取第一个参数
     read_dir $1
 参考:https://blog.csdn.net/Register_man/article/details/53860064
+
+
+获取执行脚本所在的目录及其上级目录:
+#!/bin/bash
+cd "$(dirname "$0")"
+PRO_HOME=`pwd`
+echo ${PRO_HOME}
+echo `dirname ${PRO_HOME}` 
