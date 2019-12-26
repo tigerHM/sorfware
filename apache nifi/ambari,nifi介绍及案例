@@ -13,6 +13,12 @@ NiFi采用Zero-Master Clustering范例。集群中的每个节点对数据执行
 集协调器，以获取最新流。如果群集协调器确定允许该节点加入（基于其配置的防火墙文件），则将当前流提供给该节点，并且该节点能够加入群集，假设节点的流副本与群
 集协调器提供的副本匹配。
 
+Apache MiNiFi
+MiNiFi作为NiFi的子项目，是对NiFi数据流管理核心原则的扩展，聚焦于如何从数据产生的源头收集数据；MiNiFi解决了数据在产生源头和消费者之间相互传递和管理的困难，
+可以作为数字信号的“第一或最后一英里”，通过实现边缘设备智能(edge intelligence)来调整数据流的双向通信。
+官网：https://nifi.apache.org/minifi/index.html
+文章详解见：https://www.jianshu.com/p/45eba4ef8b62
+
 实例1.replaceText的使用
 通过正则表达式并将与正则表达式匹配的内容部分替换为某个备用值来更新FlowFile的内容。
 见：https://community.hortonworks.com/articles/57803/using-nifi-gettwitter-updateattributes-and-replace.html
@@ -79,9 +85,29 @@ if (flowfile != null) {
 }
 运行的结果是对flowfile中的换行符替换为空.
 
-Apache MiNiFi
-MiNiFi作为NiFi的子项目，是对NiFi数据流管理核心原则的扩展，聚焦于如何从数据产生的源头收集数据；MiNiFi解决了数据在产生源头和消费者之间相互传递和管理的困难，
-可以作为数字信号的“第一或最后一英里”，通过实现边缘设备智能(edge intelligence)来调整数据流的双向通信。
-官网：https://nifi.apache.org/minifi/index.html
-文章详解见：https://www.jianshu.com/p/45eba4ef8b62
+
+实例8:
+使用ExecuteScript 将http请求post发送的压缩数据解压缩
+使用的Script Engine类型:ECMAScript(javascript),设置Script Body:
+
+var StreamCallback = Java.type("org.apache.nifi.processor.io.StreamCallback");
+var IOUtils = Java.type("org.apache.commons.io.IOUtils");
+var StandardCharsets = Java.type("java.nio.charset.StandardCharsets");
+var GZIPInputStream = Java.type("java.util.zip.GZIPInputStream");
+var flowfile = session.get();
+
+if (flowfile != null) {
+    try {
+        flowfile = session.write(flowfile,
+            new StreamCallback(function (inputStream, outputStream) {
+			var ungzip = new GZIPInputStream(inputStream);
+			IOUtils.copy(ungzip,outputStream)
+            }));
+        session.transfer(flowfile, REL_SUCCESS);
+    } catch (e) {
+        log.error('Something went wrong' + e);
+        session.transfer(flowfile, REL_FAILURE);
+    }
+}
+
 
