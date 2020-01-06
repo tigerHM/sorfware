@@ -19,3 +19,31 @@ sqoop import -D mapreduce.output.basename=`date +%Y-%m-%d` \
 export HADOOP_USER_NAME=xxxx
 dayno=$(date "+%Y%m%d")
 sqoop import -jt local --connect jdbc:oracle:xxxxxxxxxxxxx --username xxxx --password xxxx  --table xxxx --columns "字段A,字段B,字段C,字段D" --target-dir /xxxx/dayno=${dayno}  --m 1 &
+
+
+实例3:
+增量抽取数据,通过sqoop管理增量指标
+查看sqoop job:
+sqoop job -list
+
+##创建测试任务
+sqoop job --create testjob1 -- import -D mapreduce.output.basename=`date +%Y-%m-%d` \
+--connect 'jdbc信息' \
+--username xxxx \
+--password-file file:///home/stat/job.password \
+--table xxxx \
+--target-dir  /xxxx/xxxx(hdfs目录) \
+--temporary-rootdir /xxxx/xxxx(hdfs目录) \
+--check-column id \
+--last-value 0 \
+--incremental append \
+--fields-terminated-by ',' \
+-m 1
+
+说明:
+--password-file 这里是将密码放到文件(权限为400)中 
+--target-dir  数据写入的目标目录
+--temporary-rootdir  运行需要指定临时目录
+--check-column  通过检查指定的字段来增量抽取
+
+定时执行脚本:sqoop job -exec testjob1 
