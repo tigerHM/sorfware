@@ -12,3 +12,10 @@ https://blog.csdn.net/qq_36881881/article/details/88887243
 sqoop import -D mapreduce.output.basename=`date +%Y-%m-%d` \
 --connect xxxx --username xxxx --password xxxx --table Test --target-dir s3a://xxxx桶名/xxxx --fields-terminated-by ',' -m 1
 
+实例2:
+全量抽取数据,使用本地模式,利用linux 定时任务跑编写shell:
+
+#!/bin/bash
+export HADOOP_USER_NAME=xxxx
+dayno=$(date "+%Y%m%d")
+sqoop import -jt local --connect jdbc:oracle:xxxxxxxxxxxxx --username xxxx --password xxxx  --table xxxx --columns "字段A,字段B,字段C,字段D" --target-dir /xxxx/dayno=${dayno}  --m 1 &
