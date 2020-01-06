@@ -1,0 +1,31 @@
+java 9 新特性
+参考文档:
+https://www.ibm.com/developerworks/cn/java/the-new-features-of-Java-9/index.html
+
+1.Jshell
+jshell 是 Java 9 新增的一个实用工具。jshell 为 Java 增加了类似 NodeJS 和 Python 中的读取-求值-打印循环（ Read-Evaluation-Print Loop ） 。 
+在 jshell 中 可以直接 输入表达式并查看其执行结果。当需要测试一个方法的运行效果，或是快速的对表达式进行求值时，jshell 都非常实用。
+只需要通过 jshell 命令启动 jshell，然后直接输入表达式即可。每个表达式的结果会被自动保存下来 ，以数字编号作为引用，类似 $1 和$2 这样的名称 。
+可以在后续的表达式中引用之前语句的运行结果。 在 jshell 中 ，除了表达式之外，还可以创建 Java 类和方法。jshell 也有基本的代码完成功能。
+
+2.集合、Stream 和 Optional
+在集合上，Java 9 增加 了 List.of()、Set.of()、Map.of() 和 M ap.ofEntries()等工厂方法来创建不可变集合
+Stream 中增加了新的方法 ofNullable、dropWhile、takeWhile 和 iterate。
+Collectors 中增加了新的方法 filtering 和 flatMapping。
+Optiona l 类中新增了 ifPresentOrElse、or 和 stream 等方法。
+
+3.I/O 流新特性
+类 java.io.InputStream 中增加了新的方法来读取和复制 InputStream 中包含的数据。
+readAllBytes：读取 InputStream 中的所有剩余字节。
+readNBytes： 从 InputStream 中读取指定数量的字节到数组中。
+transferTo：读取 InputStream 中的全部字节并写入到指定的 OutputStream 中 。
+
+4.改进应用安全性能
+Java 9 新增了 4 个 SHA- 3 哈希算法，SHA3-224、SHA3-256、SHA3-384 和 S HA3-512。
+另外也增加了通过 java.security.SecureRandom 生成使用 DRBG 算法的强随机数。
+
+5.在 Java 语言本身，Java 9 允许在接口中使用私有方法。 在 try-with-resources 语句中可以使用 e ffectively-final 变量。 类 java.lang.StackWalker
+可以对线程的堆栈进行遍历，并且支持过滤和延迟访问。
+Java 9 把对 Unicode 的支持升级到了 8.0。ResourceBundle 加载属性文件的默认编码从 ISO-8859-1 改成了 UTF-8，不再需要使用 native2ascii 命令来对
+属性文件进行额外处理。
+注解@Deprecated 也得到了增强，增加了 since 和 forRemoval 两 个属性，可以分别指定一个程序元素被废弃的版本，以及是否会在今后的版本中被删除。
