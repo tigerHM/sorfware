@@ -47,3 +47,14 @@ sqoop job --create testjob1 -- import -D mapreduce.output.basename=`date +%Y-%m-
 --check-column  通过检查指定的字段来增量抽取
 
 定时执行脚本:sqoop job -exec testjob1 
+
+
+实例4:
+https://blog.csdn.net/CaptainJava/article/details/82625858
+大多数情况下,数据库的数据都是比较规范的数据.但是有时候数据库中字段里的数据可能有换行符等其他控制符号,可能导致数据的换行等情况.
+可以使用下面的参数:
+使用方法，
+1、在原有sqoop语句中添加 --hive-delims-replacement “ ” 可以将如mysql中取到的\n, \r, and \01等特殊字符替换为自定义的字符，此处用了空格
+
+2、在原有sqoop语句中添加 --hive-drop-import-delims 可以将如mysql中取到的\n, \r, and \01等特殊字符丢弃
+
