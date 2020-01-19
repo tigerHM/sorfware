@@ -1,5 +1,5 @@
 maven工程中读取配置文件   
-使用：
+1.使用谷歌的工具类：
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -22,3 +22,6 @@ maven工程中读取配置文件
         properties.load(inputStream);
         return properties;
     }
+
+2.获取resource目录的文件夹
+String  resource = this.getClass().getClassLoader().getResources().getPath();
