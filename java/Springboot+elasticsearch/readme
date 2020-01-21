@@ -27,3 +27,8 @@
 
 @Repository
 用于标注数据访问组件，即DAO组件
+
+@ConfigurationProperties(locations = "classpath:xxxx.properties", 
+                         ignoreUnknownFields = false, 
+                         prefix = "xxxx")
+加载配置bean时的常用注解:prefix用来匹配前缀为xxxx的配置装配到bean的各个属性
