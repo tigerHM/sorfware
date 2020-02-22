@@ -81,3 +81,28 @@ cd "$(dirname "$0")"
 PRO_HOME=`pwd`
 echo ${PRO_HOME}
 echo `dirname ${PRO_HOME}` 
+
+
+判断字符串中含有特殊符号：
+思路：想要搜索一串字符character中是否存在某字符，然后直接echo指令，利用管道符号，直接搜索匹配的内容看有没有结果，-n string 如果 string 长度非零，则为真。
+strA="待处理字符串"
+result=$(echo $strA | grep "匹配内容") 
+if [ -n "$result" ]; then
+    echo "yes"
+else
+    echo "no"
+fi
+此外，"^"和"$"放在匹配内容的开头和结尾用来限定匹配内容在待处理字符串的行首和行尾。
+
+
+shell 带$的变量说明：
+$$ 
+Shell本身的PID（ProcessID） 
+$! 
+Shell最后运行的后台Process的PID 
+$? 
+最后运行的命令的结束代码（返回值） 
+$# 
+添加到Shell的参数个数 
+$0 
+Shell本身的文件名 
