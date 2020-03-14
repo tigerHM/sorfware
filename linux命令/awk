@@ -13,3 +13,8 @@ awk '{[pattern] action}' {filenames}   # 行匹配语句 awk '' 只能用单引�
 # 每行按空格或TAB分割，输出文本中的第1、4列
 awk '{print $1,$4}' log.txt
 
+
+awk高级用法:
+内置函数
+参考:https://www.runoob.com/w3cnote/awk-built-in-functions.html
+
