@@ -81,5 +81,23 @@ output {
 }
 
 
+案例参考:
+https://blog.csdn.net/alan_liuyue/article/details/91998144?depth_1-utm_source=distribute.pc_relevant.none-task&utm_source=distribute.pc_relevant.none-task
+
+实例4:
+将csv文件中的增量数据导入kafka
+input {
+  file {
+    path => "/home/test/testdir/test-*.csv"
+  }
+}
+
+output {
+  kafka {
+    bootstrap_servers => "hostname1:9092,hostname2:9092,hostname3:9092"
+    topic_id => "hm_test"
+  }
+}
+
 
 
