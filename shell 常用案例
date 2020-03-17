@@ -82,6 +82,13 @@ PRO_HOME=`pwd`
 echo ${PRO_HOME}
 echo `dirname ${PRO_HOME}` 
 
+获取脚本当前目录:
+$(cd "${SCRIPT_DIR}" && pwd)
+
+获取脚本当前目录的父目录:
+$(cd "${SCRIPT_DIR}" && cd .. && pwd)
+
+
 
 判断字符串中含有特殊符号：
 思路：想要搜索一串字符character中是否存在某字符，然后直接echo指令，利用管道符号，直接搜索匹配的内容看有没有结果，-n string 如果 string 长度非零，则为真。
