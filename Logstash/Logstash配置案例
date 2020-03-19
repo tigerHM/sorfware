@@ -99,6 +99,10 @@ output {
   }
 }
 
+
+从kafka消费得到的消息是:
+时间戳 hostname message
+
 logstash-kafka 插件输入和输出默认 codec 为 json 格式.消息传递过程中 logstash 默认会为消息编码内加入相应的时间戳和 hostname 等信息.
 如果只做消息转发,可以设置如下(放在kafka下级):
     codec => plain {
