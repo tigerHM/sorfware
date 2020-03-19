@@ -108,4 +108,9 @@ logstash-kafka 插件输入和输出默认 codec 为 json 格式.消息传递过
     codec => plain {
         format => "%{message}"
      }
+message就是每一行的记录.
 
+如果想要转成json输出设置:
+codec => json 
+则从kafka里消费得到:
+{"@version":"1","path":"/home/xxx.log","message":"test11111111111111111111111","@timestamp":"2020-03-19T03:01:51.131Z","host":"xxx"}
