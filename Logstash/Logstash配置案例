@@ -14,6 +14,11 @@ output {
 启动logstash命令：
 /bin/logstash -f logstash-simple.conf
 
+运行多实例时请保证每个实例的path.data配置不一样
+/bin/logstash  -f test.conf  --path.data=/*/*
+
+path.data这个参数可以是在config目录下logstash.yml配置文件
+
 实例2：获取日志文件过滤，实现使用multiline处理多行日志，实现只输出message
 multiline 多行插件还有这几个属性：
 max_bytes:  默认值10M  对内容大小限制 
