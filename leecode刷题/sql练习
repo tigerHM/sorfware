@@ -1,3 +1,5 @@
+基础知识参考：https://www.runoob.com/sql/sql-tutorial.html
+以下sql语句都是mysql数据库。
 1.第二高的工资
 题目地址：https://leetcode-cn.com/problems/second-highest-salary/
 SQL1:
@@ -25,4 +27,15 @@ END
 SQL：select e1.name as Employee from Employee e1 inner join Employee e2 on e1.ManagerId=e2.Id where e1.Salary > e2.Salary;
 思路：观察发现在同一个表内存在记录相关的列，使用 a表 inner join b表 on 条件 where 过滤条件
 
-3.
+3.找出重复数据
+题目：https://leetcode-cn.com/problems/duplicate-emails/
+SQL:select Email from Person group by Email  having count(1) > 1;
+思路：WHERE 关键字无法与聚合函数一起使用。对分组查询的结果进行筛选，可以使用having子句。
+引申：找出重复出现超过n次的数据。
+sql:select 列名 from 表名 group by 列名 having count(1) > n;
+
+4.从不订购的客户
+题目：https://leetcode-cn.com/problems/customers-who-never-order/
+sql:select a.Name as Customers from Customers a left join Orders b on a.Id=b.CustomerId where b.CustomerId is null;
+思路：使用LEFT JOIN 关键字从左表（table1）返回所有的行，即使右表（table2）中没有匹配。如果右表中没有匹配，则结果为 NULL。 在过滤 where 列名 is null
+
