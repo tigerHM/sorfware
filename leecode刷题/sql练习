@@ -1,0 +1,28 @@
+1.第二高的工资
+题目地址：https://leetcode-cn.com/problems/second-highest-salary/
+SQL1:
+select max(Salary) SecondHighestSalary from Employee where Salary <> (select max(Salary) from Employee );
+思路：找到最大值，在表中剩下的中找最大值
+
+SQL2:
+select ifnull((select distinct Salary from Employee order by Salary desc limit 1,1),null) as SecondHighestSalary;
+思路：将数据去重排序后使用了limit方法定位记录
+LIMIT 4 OFFSET 3语句含义是返回从第3行（从0行计数）起的4行数据，第一个数字是检索的行数，第二个数字是指从哪儿开始。等同于LIMIT 3,4。
+
+引申获取第N高的值：
+CREATE FUNCTION getNthHighestSalary(N INT) RETURNS INT
+BEGIN
+  DECLARE P INT;
+  SET P = N-1;
+  RETURN (  
+      # Write your MySQL query statement below.
+      select ifnull((select distinct Salary from Employee order by Salary desc limit P,1),null) as NthHighestSalary
+  );
+END
+
+2.超过经理收入的员工
+题目地址：https://leetcode-cn.com/problems/employees-earning-more-than-their-managers/
+SQL：select e1.name as Employee from Employee e1 inner join Employee e2 on e1.ManagerId=e2.Id where e1.Salary > e2.Salary;
+思路：观察发现在同一个表内存在记录相关的列，使用 a表 inner join b表 on 条件 where 过滤条件
+
+3.
