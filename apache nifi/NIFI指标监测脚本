@@ -29,16 +29,19 @@ if __name__ == '__main__':
         all_status = getStatus(all_url)
         bytes_queued_all = all_status["controllerStatus"]["bytesQueued"]
         flow_files_queued_all = all_status["controllerStatus"]["flowFilesQueued"]
-        
         for i in nifi_connections:
             if i != "":
                 status = getStatus(base_url.replace("{id}", i))
-                prase_json = praseJson(status)
+                if status.status_code != 200:
+                    print(status.json)
+                    break
+                prase_json = praseJson(status.text)
                 queued = prase_json["connectionStatus"]["aggregateSnapshot"]["queued"]
                 queued_size = prase_json["connectionStatus"]["aggregateSnapshot"]["bytesQueued"]
                 queued_count = prase_json["connectionStatus"]["aggregateSnapshot"]["flowFilesQueued"]
-            # 设置连接堵塞告警阈值 20G 20000个flowFile
-                if [ queued_size >=  20*1024*1024*1024L or queued_count >= 20000 ]:
-                    # 具体告警逻辑
-                    print ("")
+
+                # 设置告警阈值 5G 20000个flowfile
+                if queued_size >= 5*1024*1024*1024 or queued_count >= 20000 :
+                    print("ConnectionID:"+i+"data queued:"+queued)
+                    # 添加邮件等告警接口
         time.sleep(10*60)
