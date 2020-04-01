@@ -1,0 +1,34 @@
+时间,日期
+参考:https://www.runoob.com/python/python-date-time.html
+
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import time
+import datetime
+
+if __name__ == '__main__':
+
+    print time.time()
+    # 输出:1585720634.94(带2位小数的时间戳)
+
+    print time.localtime()
+    #输出:time.struct_time(tm_year=2020, tm_mon=4, tm_mday=1, tm_hour=14, tm_min=0, tm_sec=6, tm_wday=2, tm_yday=92, tm_isdst=0)
+
+    print time.asctime(time.localtime())
+    #格式化时间  输出:Wed Apr 01 14:01:27 2020
+
+    print time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    #格式化时间 输出:2020-04-01 14:03:32
+
+    a = "Wed Apr 01 14:06:51 2020"
+    print time.mktime(time.strptime(a, "%a %b %d %H:%M:%S %Y"))
+    # 将格式字符串转换为时间戳  输出:1585721211.0
+
+    print datetime.datetime.today()
+    #输出:2020-04-01 11:47:07.732000
+
+    print datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+    #输出:2020-04-01 11:52:47
+
+    print datetime.date(1992,10,05)
+    #构造日期,输出:1992-10-05
