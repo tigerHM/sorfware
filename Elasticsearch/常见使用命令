@@ -1,0 +1,9 @@
+常用命令
+
+使用curl 查询:
+查询集群状态:
+curl -XGET "ip:port/_cat/health?v
+
+查询所有index:
+curl -XGET "ip:port/_cat/indices?v"
+
