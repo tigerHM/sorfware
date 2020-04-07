@@ -1,0 +1,14 @@
+python脚本中开头中说明:
+添加:# -*- coding: UTF-8 -*- 表明指定文件编码
+
+
+问题1:
+出现UnicodeDecodeError: 'ascii' codec can't decode byte 0xe5 in position
+python2.x的默认编码是ascii，而代码中可能由utf-8的字符导致，解决方法是设置utf-8.
+添加:
+import sys
+
+if sys.getdefaultencoding() != 'utf-8':
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+    
