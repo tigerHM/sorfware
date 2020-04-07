@@ -1,0 +1,5 @@
+python内置函数
+https://www.runoob.com/python/python-built-in-functions.html
+常见的内置函数:
+1.str()
+str() 函数将对象转化为适于人阅读的形式.
