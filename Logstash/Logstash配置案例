@@ -119,3 +119,32 @@ message就是每一行的记录.
 codec => json 
 则从kafka里消费得到:
 {"@version":"1","path":"/home/xxx.log","message":"test11111111111111111111111","@timestamp":"2020-03-19T03:01:51.131Z","host":"xxx"}
+
+
+使用ruby filter对数据进行重现构造.
+在不同输入input中设置type,使用filter对event进行重新构造.
+将csv数据构造成自定义event.
+filter {
+    ruby {
+        init => '
+            @keyNamexxxxx=["zd1","zd2",..."zdn"]
+            @keyNameyyyyy=["zd1","zd2",..."zd5"]
+			def filter(event, &block)
+                case event["type"]
+                when "xxxx"
+                    e = LogStash::Event.new(Hash[@keyNamexxxxx.zip(event["message"].split("\t"))])
+                    e["type"] = "xxxx"
+                    e["path"] = event["path"]
+                    yield e
+                    event.cancel
+                when "yyyy"
+                    e = LogStash::Event.new(Hash[@keyNameyyyyy.zip(event["message"].split("\t"))])
+                    e["type"] = "yyyy"
+                    e["path"] = event["path"]
+                    yield e
+                    event.cancel
+                end        
+            end'
+            code => "filter(event)"
+    }
+}
