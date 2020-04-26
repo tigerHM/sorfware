@@ -133,7 +133,7 @@ codec => json
 
 使用ruby filter对数据进行重现构造.
 在不同输入input中设置type,使用filter对event进行重新构造.
-将csv数据构造成自定义event.
+将csv数据构造成自定义event.修改字段名.
 filter {
     ruby {
         code => '
