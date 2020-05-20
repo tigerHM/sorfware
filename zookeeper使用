@@ -1,0 +1,4 @@
+ZooKeeper是用于分布式应用程序的高性能协调服务。
+详情：https://zookeeper.apache.org/
+CuratorFramework是zookeeper的客户端，提供了更抽象的api.
+https://blog.csdn.net/kiss_the_sun/article/details/50157889
