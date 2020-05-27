@@ -7,3 +7,5 @@ curl -XGET "ip:port/_cat/health?v
 查询所有index:
 curl -XGET "ip:port/_cat/indices?v"
 
+使用postman查询参考:
+https://www.jianshu.com/p/98ea764d9612
