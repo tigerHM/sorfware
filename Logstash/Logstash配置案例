@@ -146,3 +146,8 @@ filter {
             remove_field => "host"
         }
 }
+
+
+
+收集csv 数据和apachelog 案例参考:
+https://blog.csdn.net/wfs1994/article/details/80862541
