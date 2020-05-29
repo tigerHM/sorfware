@@ -1,0 +1,43 @@
+通过shell 调度定时对数据入库
+
+#!/bin/bash
+
+dayno=$(date "+%Y%m%d")
+hour=$(date "+%H")
+
+##设置环境变量
+export HADOOP_USER_NAME=hive
+
+##定义各个参数
+base_dir="hdfs://abc-hdfs/datacenter/****"
+database= ****
+hql="use ${database};alter table test_hm add partition (dayno='${dayno}',hour='${hour}') location ${base_dir}/dayno=${dayno}/hour=${hour};"
+
+check_statu=0
+
+##检索hdfs文件进行入库前检查
+hadoop fs -ls -R ${base_dir}/dayno=${dayno}/hour=${hour} |awk '{print $1,$6,$7,$8}' |
+while read  info date time file
+do
+    str=$info+$date $time+$file
+##    echo ${str}
+    if ${info:0:1} = 'd'
+    then
+        continue
+    fi
+    if ${file:0:1} ='.' -o ${file} =~ 'tmp'
+    then
+        echo 'exist file : ${str}'
+        check_statu=-1
+        break
+    fi
+done
+
+##执行入库脚本;前提是脚本执行机器已将HIVE安装信息添加到环境变量里
+result=0
+if check_statu ==0 
+then
+    hive -e $hql
+    result=$?
+    echo "数据入库结果:$result"
+fi
