@@ -21,11 +21,11 @@ while read  info date time file
 do
     str=$info+$date $time+$file
 ##    echo ${str}
-    if ${info:0:1} = 'd'
+    if [ ${info:0:1} = 'd']
     then
         continue
     fi
-    if ${file:0:1} ='.' -o ${file} =~ 'tmp'
+    if [ ${file:0:1} ='.' -o ${file} =~ 'tmp' ]
     then
         echo 'exist file : ${str}'
         check_statu=-1
@@ -35,7 +35,7 @@ done
 
 ##执行入库脚本;前提是脚本执行机器已将HIVE安装信息添加到环境变量里
 result=0
-if check_statu ==0 
+if [ check_statu == 0 ] 
 then
     hive -e $hql
     result=$?
