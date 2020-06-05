@@ -1,0 +1,10 @@
+参考:https://www.runoob.com/linux/linux-comm-date.html
+
+获取日期(2020-05-06):
+date "+%Y-%m-%d"
+获取日期时间(2020-06-05 18:04:07):
+date "+%Y-%m-%d %H:%M:%S"
+
+将时间解析成时间戳:
+date2="2008-4-10 15:00:00"
+`date -d "$date2" +%s`
