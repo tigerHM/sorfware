@@ -151,3 +151,34 @@ filter {
 
 收集csv 数据和apachelog 案例参考:
 https://blog.csdn.net/wfs1994/article/details/80862541
+
+案例5: 从kafka中消费avro数据,写入ElasticSearch.
+需要注意的是数据所采用的的序列化和反序列化要一致.
+本案例是将数据构造成GenericData.Record,一条条发送到kafka
+
+配置:
+input {
+  kafka {
+    bootstrap_servers => "XXXX:9092,XXXX:9092,XXXX:9092" 
+    topics => "hm_avro"
+    group_id => "logstash_1"
+    auto_offset_reset => "latest"
+    type => "avro"
+    key_deserializer_class => "org.apache.kafka.common.serialization.StringDeserializer"
+    value_deserializer_class => "org.apache.kafka.common.serialization.ByteArrayDeserializer"
+    ## 使用编码处理器 avro
+    codec => avro {		
+        schema_uri => "/tmp/user.avsc"  ##指定schema的存储位置
+    }
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://XXXX:9200","http://XXXX:9200","http://XXXX:9200"]
+    index => "test_avro-%{+YYYY.MM.dd}"
+    codec => "json"
+  }
+}
+
+
