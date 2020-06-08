@@ -1,0 +1,7 @@
+文章参考:https://www.jianshu.com/p/fb2fa03a2f03
+
+容错方面:
+Hadoop 2.x - 可以通过复制（浪费空间）来处理容错。
+Hadoop 3.x - 可以通过Erasure编码处理容错。
+官网介绍:https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-hdfs/HDFSErasureCoding.html
+使用擦除编码（EC）代替复制，它提供了相同级别的容错能力，而存储空间却少得多。
