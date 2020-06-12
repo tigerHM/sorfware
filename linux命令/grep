@@ -1,0 +1,7 @@
+grep 命令用于查找文件里符合条件的字符串
+详细参考:https://www.runoob.com/linux/linux-comm-grep.html
+
+案例1:
+匹配有效的电话号码必须满足以下两种格式： (xxx) xxx-xxxx 或 xxx-xxx-xxxx
+grep -P '^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$' test.txt
+
