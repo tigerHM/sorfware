@@ -44,3 +44,25 @@ sql:select a.Name as Customers from Customers a left join Orders b on a.Id=b.Cus
 来删除 Person 表中所有重复的电子邮箱，重复的邮箱里只保留 Id 最小 的那个。
 思路:将表自关联,找出合并后的记录a表id大于B表ID的内容删除掉
 sql:delete p1 from Person as p1 left join Person as p2 on p1.email = p2.email where p1.id > p2.id;
+
+
+6.游泳馆的人流量
+每日人流量信息被记录在这三列信息中：序号 (id)、日期 (visit_date)、 人流量 (people)。
+找出人流量的高峰期。高峰期时，至少连续三行记录中的人流量不少于100.
+思路:在表 stadium 中查询人流量超过 100 的记录，将查询结果与其自身的临时表连接，再使用 WHERE 子句获得满足条件的记录。
+https://leetcode-cn.com/problems/human-traffic-of-stadium/solution/ti-yu-guan-de-ren-liu-liang-by-leetcode/
+SQL:
+select distinct t1.*
+from stadium t1, stadium t2, stadium t3
+where t1.people >= 100 and t2.people >= 100 and t3.people >= 100
+and
+(
+	  (t1.id - t2.id = 1 and t1.id - t3.id = 2 and t2.id - t3.id =1)  -- t1, t2, t3
+    or
+    (t2.id - t1.id = 1 and t2.id - t3.id = 2 and t1.id - t3.id =1) -- t2, t1, t3
+    or
+    (t3.id - t2.id = 1 and t2.id - t1.id =1 and t3.id - t1.id = 2) -- t3, t2, t1
+)
+order by t1.id;
+
+
