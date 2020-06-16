@@ -1,0 +1,12 @@
+python2.7 连接mysql
+
+注意需要python提前安装好相应的包
+
+mydb = MySQLdb.connect(
+  host="",
+  port=3306,
+  user="xxx",
+  passwd="xxx",
+  db="xxx"
+)
+mycursor = mydb.cursor()
