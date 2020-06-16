@@ -1,4 +1,5 @@
 python2.7 连接mysql
+参考:https://www.runoob.com/python/python-mysql.html
 
 注意需要python提前安装好相应的包
 
