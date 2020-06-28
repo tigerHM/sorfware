@@ -1,0 +1,22 @@
+bc
+bc 命令是任意精度计算器语言，通常在linux下当计算器用。
+详细参考:https://www.runoob.com/linux/linux-comm-bc.html
+
+示例1:
+直接输入bc,进入计算器界面.
+
+示例2:
+通过管道符,进行计算
+echo "scale=3;11/3" |bc   ##(scale=3表示小数位)
+
+示例3:进制转换
+obase表示输出的进制;ibase=输入的进制
+
+echo "obase=2;192" | bc
+结果:11000000
+
+echo "obase=16;192" | bc
+结果:C0
+
+echo "obase=10;ibase=16;C0" | bc
+结果:192
