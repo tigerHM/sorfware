@@ -3,3 +3,21 @@ https://www.runoob.com/python/python-built-in-functions.html
 常见的内置函数:
 1.str()
 str() 函数将对象转化为适于人阅读的形式.
+
+2.abs()
+返回数字的绝对值。
+
+3.range()
+说明:
+range(stop) -> range object
+range(start, stop[, step]) -> range object
+start默认从0开始.
+如:range(4)会产生0, 1, 2, 3.
+
+4.format()
+格式化字符串的函数
+示例:
+>>>"{} {}".format("hello", "world")    # 不设置指定位置，按默认顺序
+'hello world'
+>>> "{0} {1}".format("hello", "world")  # 设置指定位置
+'hello world'
