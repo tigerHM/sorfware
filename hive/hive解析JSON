@@ -29,7 +29,8 @@ OK
 ALTER TABLE my_table SET SERDEPROPERTIES ( "ignore.malformed.json" = "true");
 
 当你的json数据中包含hive关键字时，导入的数据会有问题，此时 SerDe可以使用SerDe属性将hive列映射到名称不同的属性:
-CREATE TABLE my_table(id string, name string, hoppy array, home string)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' WITH SERDEPROPERTIES ("mapping.hive字段名"="json字段名") STORED AS TEXTFILE;
+CREATE TABLE my_table(id string, name string, hoppy array, home string)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' 
+WITH SERDEPROPERTIES ("mapping.hive字段名"="json字段名") STORED AS TEXTFILE;
 
 2.示例
 json数据:
@@ -37,7 +38,8 @@ json数据:
 {"id":2,"name":"sdx","course":{"chinese":"66","math":"58"}}
 {"id":3,"name":"sdf","course":{"chinese":"70","math":"90"}}
 
-建表:CREATE TABLE my_table7(id int, name string, course struct<chinese:string,math:string>)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+建表:CREATE TABLE my_table7(id int, name string, course struct<chinese:string,math:string>)ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' 
+STORED AS TEXTFILE;
 load  data local inpath "/.../..." into table 表名;
 查询全表:
 1	znk	{"yuwen":"100","shuxue":"80"}
@@ -58,7 +60,8 @@ json数据:
 {"id":2,"name":"sdx","course":{"chinese":"66","math":"58"}}
 {"id":3,"name":"sdf","course":{"chinese":"70","math":"90","english":"79"}}
 
-建表A:CREATE TABLE my_table2 (id int, name string, course struct<chinese:string,math:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+建表A:CREATE TABLE my_table2 (id int, name string, course struct<chinese:string,math:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' 
+STORED AS TEXTFILE;
 查询结果:
 hive> select * from my_table2;
 OK
@@ -68,7 +71,8 @@ OK
 
 在建表语句中,没有对字段englishd的定义,有该字段的数据则自动忽略了.
 
-建表B:CREATE TABLE my_table3 (id int, name string, course struct<chinese:string,math:string,english:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' STORED AS TEXTFILE;
+建表B:CREATE TABLE my_table3 (id int, name string, course struct<chinese:string,math:string,english:string>) ROW FORMAT SERDE 'org.apache.hive.hcatalog.data.JsonSerDe' 
+STORED AS TEXTFILE;
 查询结果:
 hive> select * from my_table3;
 OK
