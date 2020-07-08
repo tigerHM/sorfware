@@ -9,3 +9,12 @@ Hive查询复杂数据类型:
 create external table mytable(id string, meiti array<string>,...) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
 COLLECTION ITEMS TERMINATED BY ',' LOCATION '路径';
 注意:COLLECTION ITEMS TERMINATED BY ','这里的分隔符是数据文件中array字段里的间隔符
+查询时,使用meiti[n],n是从0开始;
+
+2.查询map
+参考:https://www.cnblogs.com/sonia0087/p/9890889.html
+准备:
+create external table mytable(id string, meiti map<string,int>,...) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' 
+COLLECTION ITEMS TERMINATED BY ',' MAP KEYS TERMINATED BY ':' STORED AS TEXTFILE;
+
+查询时使用meiti['key']去获取具体key对应的value.
