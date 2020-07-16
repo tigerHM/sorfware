@@ -1,0 +1,17 @@
+记录常用脚本
+示例1:遍历输出hdfs某个目录下的文件
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import subprocess
+
+if __name__ == '__main__':
+  #subprocess.call("ls -l",shell=True)
+  p=subprocess.Popen("hadoop fs -ls -R /flume/hdfs2",shell=True,stdout=subprocess.PIPE)
+  out=p.stdout.readlines()
+  for line in out:
+    #if line.startswith('dr') or line.startswith('-r'):
+    if line.startswith('-r'):
+      print line.strip()
+      
+      
+示例2:
