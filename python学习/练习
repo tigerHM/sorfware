@@ -15,3 +15,10 @@ if __name__ == '__main__':
       
       
 示例2:
+ #比较时间(参数是字符串类型格式是%Y-%m-%d %H:%M:%S的时间进行比较)
+    def time_compare(first_time,second_time):
+        print (time.mktime(time.strptime(first_time,"%Y-%m-%d %H:%M:%S")))
+        print (time.mktime(time.strptime(second_time, "%Y-%m-%d %H:%M:%S")))
+        return int(time.mktime(time.strptime(first_time,"%Y-%m-%d %H:%M:%S"))) - int(time.mktime(time.strptime(second_time,"%Y-%m-%d %H:%M:%S")))
+
+    print (time_compare("2020-07-17 6:32:01", "2020-07-17 9:45:55"))
