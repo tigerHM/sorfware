@@ -1,0 +1,9 @@
+在 Python 中，若使用CPython作为Python 解释器的话（用C语言实现的 Python 解释器，目前使用最广泛），无论CPU是单核还是多核，同时都只能由一个线程在执行。
+其根源是 GIL 的存在。GIL 的全称是 Global Interpreter Lock(全局解释器锁)，某个线程想要执行，必须先拿到 GIL，我们可以把 GIL 看作是“通行证”，并且在一个 Python 进程中，
+GIL 只有一个。
+
+Python中使用线程有两种方式：函数或者用类来包装线程对象。
+具体线程相关参考:https://www.runoob.com/python/python-multithreading.html
+
+
+在Python中，我们通过标准库中的subprocess包来fork一个子进程，并运行一个外部的程序。
