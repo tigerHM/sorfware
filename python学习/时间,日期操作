@@ -32,3 +32,11 @@ if __name__ == '__main__':
 
     print datetime.date(1992,10,05)
     #构造日期,输出:1992-10-05
+
+
+需要区别的time的两个函数:
+time.strftime(fmt[,tupletime])
+接收以时间元组，并返回以可读字符串表示的当地时间，格式由fmt决定。
+
+time.strptime(str,fmt='%a %b %d %H:%M:%S %Y')
+根据fmt的格式把一个时间字符串解析为时间元组。
