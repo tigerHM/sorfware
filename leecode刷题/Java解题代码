@@ -21,4 +21,79 @@ public class solution {
 
 }
 
-2.
+2.输入正整数A,B,求出A,B的最小公倍数
+如果输入:5 ,7;最小公倍数是35.
+/**
+ * 获取最小公倍数
+ * @
+ */
+public class testdemo5 {
+    public static ArrayList<Integer> getPrimeNumbers(int number){
+        ArrayList<Integer> primeNumbers = new ArrayList<>();
+        for (int i = 1;i <= number ; i++){
+            if((number%i) ==0){
+                primeNumbers.add(i);
+            }
+        }
+        return primeNumbers;
+    }
+
+    private static int getMinCommonMul(int num1, int num2) {
+        ArrayList<Integer> primeNumbers_num1 = getPrimeNumbers(num1);
+        ArrayList<Integer> primeNumbers_num2 = getPrimeNumbers(num2);
+
+        int number = primeNumbers_num1.get(1) * primeNumbers_num2.get(1);
+        return number;
+    }
+
+    public static void main(String[] args) {
+        int mul = getMinCommonMul(25, 23);
+        System.out.println(mul);
+    }
+}
+
+
+3.计算一个数字的立方根,不使用库函数
+/**
+ * 求立方根,不使用库函数
+ *
+ * @
+ */
+public class testdemo6 {
+    public static void main(String[] args) {
+        double value = new BigDecimal(kailifang(216)).setScale(1, BigDecimal.ROUND_HALF_UP).doubleValue();
+        System.out.println(value);
+        System.out.println(sqrt(216));;
+    }
+    private static double kailifang(double num) {
+        double x = 1;
+        double x1 = x - (x*x*x - num) / (3*x*x);
+        while(x - x1 >0.000000001 || x - x1 < -0.000000001){        //判断精度
+            x = x1;
+            x1 = x - (x*x*x - num) / (3*x*x);
+        }
+        return x1;
+
+    }
+
+    /**
+     * 求平方根
+     * @param c
+     * @return
+     */
+    public static double sqrt(double c) {
+        if (c < 0) {
+            return Double.NaN;
+        }
+
+        double e = 1e-15;
+        double x = c;
+        double y = (x + c / x) / 2;
+        while (Math.abs(x - y) > e) {
+            x = y;
+            y = (x + c / x) / 2;
+        }
+        return x;
+    }
+
+}
