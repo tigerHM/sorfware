@@ -11,3 +11,43 @@ mydb = MySQLdb.connect(
   db="xxx"
 )
 mycursor = mydb.cursor()
+
+
+
+练习:
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import MySQLdb
+
+if __name__ == '__main__':
+
+    mydb = MySQLdb.connect(
+        host="xxxx",
+        port=xxx,
+        user="",
+        passwd="",
+        db=""
+    )
+    mycursor = mydb.cursor()
+    mycursor.execute("SELECT VERSION()")
+    # 使用 fetchone() 方法获取一条数据
+    data = mycursor.fetchone()
+    print "Database version : %s " % data
+
+    #使用 fetchall() 方法获取数据集 
+    mycursor.execute("show tables")
+    results=mycursor.fetchall()
+    for table in results:
+       print "表名: %s" % table
+
+    mycursor.execute("desc 表名")
+    columns=mycursor.fetchall()
+    for row in columns:
+        print row
+
+    mycursor.execute("select * from 表名 limit 5")
+    results=mycursor.fetchall()
+    for row in results:
+        print row
+    # 执行sql语句` 
+    mydb.close()
