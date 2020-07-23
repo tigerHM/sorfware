@@ -103,4 +103,8 @@ public class testdemo6 {
 使用StringBuffer的reverse()方法
 
 
-5
+
+5.验证一个合法的IPv4地址
+Parttern.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$",ip)
+
+6.
