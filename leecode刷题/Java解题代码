@@ -107,4 +107,9 @@ public class testdemo6 {
 5.验证一个合法的IPv4地址
 Parttern.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$",ip)
 
-6.
+
+6.计算24点:
+解答参考:https://blog.csdn.net/qq467215628/article/details/104042321?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
+
+
+7.
