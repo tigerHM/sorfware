@@ -27,8 +27,9 @@ public class solution {
  * 获取最小公倍数
  * @
  */
-public class testdemo5 {
-   private static int getMinCommonMul(int num1, int num2) {
+import java.util.Scanner;
+public class Main{
+    private static int getMinCommonMul(int num1, int num2) {
         int tmp;
         int m=num1;
         int n=num2;
@@ -48,8 +49,15 @@ public class testdemo5 {
     }
 
     public static void main(String[] args) {
-        int mul = getMinCommonMul(328, 7751);
-        System.out.println(mul);
+        Scanner in =new Scanner(System.in);
+        String strint=in.nextLine();
+        String[] ints= strint.split(" ");
+        if(ints.length==2){
+           int result = getMinCommonMul(Integer.parseInt(ints[0]),Integer.parseInt(ints[1]));
+           System.out.println(result);
+        }else {
+           System.out.println("error input");
+        }
     }
 }
 
