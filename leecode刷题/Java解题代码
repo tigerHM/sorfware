@@ -112,4 +112,5 @@ Parttern.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$",ip)
 解答参考:https://blog.csdn.net/qq467215628/article/details/104042321?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
 
 
-7.
+7.输入某年某月某日，判断这一天是这一年的第几天？
+参考:https://blog.csdn.net/sinat_34814635/article/details/52825471
