@@ -28,26 +28,27 @@ public class solution {
  * @
  */
 public class testdemo5 {
-    public static ArrayList<Integer> getPrimeNumbers(int number){
-        ArrayList<Integer> primeNumbers = new ArrayList<>();
-        for (int i = 1;i <= number ; i++){
-            if((number%i) ==0){
-                primeNumbers.add(i);
+   private static int getMinCommonMul(int num1, int num2) {
+        int tmp;
+        int m=num1;
+        int n=num2;
+        if(m<n){
+            tmp = n;
+            n=m;
+            m=tmp;
+        }
+        int result=0;
+        for (int i = m;i > 0 ; i++){
+            if(i%m==0 && i%n==0){
+                result=i;
+                break;
             }
         }
-        return primeNumbers;
-    }
-
-    private static int getMinCommonMul(int num1, int num2) {
-        ArrayList<Integer> primeNumbers_num1 = getPrimeNumbers(num1);
-        ArrayList<Integer> primeNumbers_num2 = getPrimeNumbers(num2);
-
-        int number = primeNumbers_num1.get(1) * primeNumbers_num2.get(1);
-        return number;
+        return result;
     }
 
     public static void main(String[] args) {
-        int mul = getMinCommonMul(25, 23);
+        int mul = getMinCommonMul(328, 7751);
         System.out.println(mul);
     }
 }
