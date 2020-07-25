@@ -164,3 +164,126 @@ public class Main{
 
 9.输入一个double类型的数,输出人民币格式:(中文大写金额数字前应标明“人民币”字样。中文大写金额数字应用壹、贰、叁、肆、伍、陆、柒、捌、玖、拾、佰、仟、万、亿、元、角、分、零、整等字样填写;
 中文大写金额数字到“元”为止的，在“元”之后，应写“整字，如￥ 532.00应写成“人民币伍佰叁拾贰元整”。在”角“和”分“后面不写”整字。)
+import java.util.*;
+
+/**
+ * @
+ */
+public class testDemo8 {
+    private final static char[] NUM = {'零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖', '拾','佰', '仟', '万', '亿'};
+
+    public static void main(String[] args){
+        Scanner scanner =new Scanner(System.in);
+        double input = scanner.nextDouble();
+        System.out.println(transform(input));
+    }
+
+    public static String transform(double input){
+        long n = (long) input;
+        StringBuilder builder=new StringBuilder("人民币");
+        if (n > 0) {
+            transform(n, builder);
+            builder.append('元');
+        }
+        // 加上0.0001是为了防止d*100发生失真
+        int v = (int) (input * 100 - n * 100 + 0.0001);
+        int i = v / 10;
+        int j = v % 10;
+        if (i == 0 && j == 0) {
+            builder.append('整');
+            return builder.toString();
+        }
+        if (i != 0) {
+            builder.append(NUM[i]).append('角');
+        }
+        if (j != 0) {
+            builder.append(NUM[j]).append('分');
+        }
+        return builder.toString();
+    }
+
+    private static void transform(long n, StringBuilder builder) {
+        // 大于一亿
+        if (n >= 100000000) {
+            long q = n / 100000000;
+            long r = n % 100000000;
+            transform(q, builder);
+            builder.append('亿');
+            if (r != 0) {
+                transform(r, builder);
+            }
+        }
+        else if (n >= 10000) {
+            long q = n / 10000;
+            long r = n % 10000;
+            transform(q, builder);
+            builder.append('万');
+            if (r != 0) {
+                if (r < 100) {
+                    builder.append('零');
+                }
+                transform(r, builder);
+            }
+        }
+        else if (n >= 1000) {
+            long q = n / 1000;
+            long r = n % 1000;
+            transform(q, builder);
+            builder.append('仟');
+            if (r != 0) {
+                if (r < 100) {
+                    builder.append('零');
+                }
+                transform(r, builder);
+            }
+        }
+        else if (n >= 100) {
+            long q = n / 100;
+            long r = n % 100;
+            transform(q, builder);
+            builder.append('佰');
+            if (r != 0) {
+                if (r < 10) {
+                    builder.append('零');
+                }
+                transform(r, builder);
+            }
+        }
+        else if (n >= 10) {
+            long q = n / 10;
+            long r = n % 10;
+            if (q > 1) {
+                transform(q, builder);
+            }
+            builder.append('拾');
+            // 是亿的整数倍
+            if (r != 0) {
+                transform(r, builder);
+            }
+        } else {
+            builder.append(NUM[(int) n]);
+        }
+    }
+}
+
+10.输入一个单向链表，输出该链表中倒数第k个结点 
+题目:https://www.nowcoder.com/practice/54404a78aec1435a81150f15f899417d
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws Exception{
+        BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
+        String str;
+        while((str=br.readLine())!=null){
+            int num=Integer.parseInt(str);
+            String[] strs=br.readLine().split(" ");
+            String slen=br.readLine();
+            int len=Integer.parseInt(slen);
+            if(len>0 && num-len>=0){
+                System.out.println(strs[num-len]);
+            }else{
+                System.out.println(0);
+            }
+        }
+    }
+}
