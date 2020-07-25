@@ -118,8 +118,49 @@ Parttern.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$",ip)
 
 
 6.计算24点:
-解答参考:https://blog.csdn.net/qq467215628/article/details/104042321?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
+解答参考:https://blog.csdn.net/qq467215628/article/details/104042321?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param&depth_1
+-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.channel_param
 
 
 7.输入某年某月某日，判断这一天是这一年的第几天？
 参考:https://blog.csdn.net/sinat_34814635/article/details/52825471
+
+
+
+8.传入一个int型数组，返回该数组能否分成两组，使得两组中各元素加起来的和相等，并且，所有5的倍数必须在其中一个组中，所有3的倍数在另一个组中
+（不包括5的倍数），能满足以上条件，返回true；不满足时返回false。 
+
+import java.util.*;
+public class Main{
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        while(sc.hasNext()){
+            int n = sc.nextInt();
+            int sum1=0, sum2 = 0;
+            int count = 0;
+            int[] a = new int[n];
+            for(int i = 0; i < n; i++){
+                int temp = sc.nextInt();
+                if(temp % 5 == 0){
+                    sum1 += temp;
+                }else if(temp % 3 == 0){
+                    sum2 += temp;
+                }else{
+                    a[count++] = temp;
+                }
+            }
+            int sum = Math.abs(sum1 - sum2);
+            System.out.println(function(0,count,a,0,sum));
+        }
+    }
+    private static boolean function(int i, int n, int[] a, int result, int sum){
+        if(i == n)
+            return Math.abs(result) == sum;
+        else{
+            return function(i+1, n, a, result + a[i], sum) || function(i+1, n, a, result-a[i], sum);
+        }
+    }
+}
+
+9.输入一个double类型的数,输出人民币格式:(中文大写金额数字前应标明“人民币”字样。中文大写金额数字应用壹、贰、叁、肆、伍、陆、柒、捌、玖、拾、佰、仟、万、亿、元、角、分、零、整等字样填写;
+中文大写金额数字到“元”为止的，在“元”之后，应写“整字，如￥ 532.00应写成“人民币伍佰叁拾贰元整”。在”角“和”分“后面不写”整字。)
