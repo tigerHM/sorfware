@@ -132,3 +132,10 @@ elif [ $t1 -eq $t2 ]; then
 else
     echo "$date1 < $date2"
 fi
+
+
+时间的获取:
+offset=30
+target_date=`date +'%Y%m%d %H:%M' -d "${offset} minutes ago"`
+target_day=`date +'%Y%m%d' -d "${offset} minutes ago"`
+target_hour=`date +'%H' -d "${offset} minutes ago"`
