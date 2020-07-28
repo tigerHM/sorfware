@@ -1,0 +1,16 @@
+expr
+手工命令行计数器
+具体查看:https://www.runoob.com/linux/linux-comm-expr.html
+简单运用:
+ > expr 14 % 9
+ 5
+ > expr 10 + 10
+ 20
+ > expr 1000 + 900
+ 1900
+ > expr 30 / 3 / 2
+ 5
+ > expr 30 \* 3 (使用乘号时，必须用反斜线屏蔽其特定含义。因为shell可能会误解显示星号的意义)
+ 90
+ > expr 30 * 3
+ expr: Syntax error
