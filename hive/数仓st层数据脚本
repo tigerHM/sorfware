@@ -5,3 +5,64 @@
 2.私有变量定义和引入
 3.主程序(流处理数据需要考虑延时等待等问题,需要配置作业完成状态的相关信息)
   数据文件完整性检查,非正常文件的处理
+
+
+
+HIVE 定时导入入库shell:
+
+##建表语句
+CREATE EXTERNAL TABLE IF NOT EXISTS ${target_db}.${target_table} (
+    id int comment '编号',
+    p_name string comment '产品名称',
+    ...
+)
+PARTITIONED BY (
+  dayno int comment '日期',
+  hour int comment '小时')
+ROW FORMAT DELIMITED
+  FIELDS TERMINATED BY '\t'
+  COLLECTION ITEMS TERMINATED BY '\u0001'
+  MAP KEYS TERMINATED BY '\u0002'
+STORED AS textfile;
+##
+
+
+需要环境变量配置好hive环境
+shell调用hive SQL:
+v_job_stat=0
+target_db="xxx"
+target_table="xxx"
+
+##数据目录
+log_path="hdfs://xxxx/xxxx"
+
+offset=30
+target_day=`date +'%Y%m%d' -d "${offset} minutes ago"`
+target_hour=`date +'%H' -d "${offset} minutes ago"`
+
+##将执行语句抽取为方法
+function ExecuteHQL(){
+	V_BIHIVE_USER=$2
+	V_BIHIVE_PWD=$3
+	beeline --showHeader=true -n ${V_BIHIVE_USER} -p ${V_BIHIVE_PWD} -u "jdbc:hive2://xxxx/" -e "$1"
+	return "$?"
+}
+
+v_hdfs_dir="${log_path}/dayno=${target_day}/hour=${target_hour}"
+
+# 分区文件存在情况
+if [ `hadoop fs -ls ${v_hdfs_dir} | wc -l` -gt 0 ];then
+hql="
+alter table ${target_db}.${target_table} drop if exists partition(dayno=${target_day},hour=${target_hour});
+alter table ${target_db}.${target_table} add  if not exists partition(dayno=${target_day},,hour=${target_hour}) location '${v_hdfs_dir}';
+"
+echo "$(date +%Y-%m-%d:%T)" "$hql"
+ExecuteHQL "${hql}" "username "passwd"
+v_job_stat=`expr ${v_job_stat} + $?`
+else
+  echo "${v_flume_dir} not exist, no need to add to partition"
+fi
+
+##返回作业执行状态码
+echo "v_job_stat = ${v_job_stat}"
+exit ${v_job_stat}
