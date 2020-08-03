@@ -60,7 +60,7 @@ echo "$(date +%Y-%m-%d:%T)" "$hql"
 ExecuteHQL "${hql}" "username "passwd"
 v_job_stat=`expr ${v_job_stat} + $?`
 else
-  echo "${v_flume_dir} not exist, no need to add to partition"
+  echo "${v_hdfs_dir} not exist, no need to add to partition"
 fi
 
 ##返回作业执行状态码
