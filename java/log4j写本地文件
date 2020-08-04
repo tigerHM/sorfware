@@ -1,0 +1,33 @@
+通过logback配置,实现单独某个类的日志写入单独的目录文件.
+
+spring boot项目中配置一个服务:
+
+@Service
+public class LogTestService {
+	private static final Logger log=LoggerFactory.getLogger(LogTestService.class);
+	public void test(String message){
+		log.info(message);
+	}
+}
+
+将这个服务配置到logback.xml配置中:
+    <appender name="testLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>D:\\log-test\\logtest-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!--表示只输出消息体-->
+            <pattern>%msg%n</pattern>
+            <!--<charset>UTF-8</charset>-->
+        </encoder>
+    </appender>
+    <!--注意:这里的name需要配置项目中服务的类路径-->
+    <logger name="xxx.xxx.service.LogTestService" level="INFO" additivity="false">
+        <appender-ref ref="testLogFile"/>
+    </logger>
+    
+该方法可以用于数据写本地实现高效写磁盘.
