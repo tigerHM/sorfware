@@ -22,3 +22,12 @@ if __name__ == '__main__':
         return int(time.mktime(time.strptime(first_time,"%Y-%m-%d %H:%M:%S"))) - int(time.mktime(time.strptime(second_time,"%Y-%m-%d %H:%M:%S")))
 
     print (time_compare("2020-07-17 6:32:01", "2020-07-17 9:45:55"))
+
+
+示例3:
+遍历输出文件中内容
+    file = open("C:\\Users\\Administrator\\Desktop\collect\\test.txt", "r")
+    # print(len(file.readlines()))
+    for line in file:
+        print line.strip()
+    file.close()
