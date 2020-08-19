@@ -1,4 +1,6 @@
 常用命令
+使用postman查询参考:
+https://www.jianshu.com/p/98ea764d9612
 
 使用curl 查询:
 查询集群状态:
@@ -7,5 +9,11 @@ curl -XGET "ip:port/_cat/health?v
 查询所有index:
 curl -XGET "ip:port/_cat/indices?v"
 
-使用postman查询参考:
-https://www.jianshu.com/p/98ea764d9612
+查询几条数据(postman):
+http://ip:port/test_avro-2020.08/_search
+{
+    "query":{
+        "match_all":{}
+    },
+    "size":10
+}
