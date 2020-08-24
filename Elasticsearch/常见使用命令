@@ -19,6 +19,7 @@ http://ip:port/test_avro-2020.08/_search
 }
 
 获取索引的映射(mapping):
+在创建索引后,Elasticsearch为对字段类型进行猜测，动态生成了字段和类型的映射关系.字段类型的不同会导致查询结果的不同.
 get http://ip:9200/log_avro-2020.08/_mapping
 
 
