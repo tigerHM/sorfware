@@ -23,3 +23,13 @@ http://ip:port/test_avro-2020.08/_search
 get http://ip:9200/log_avro-2020.08/_mapping
 
 
+查询数据精确查询指定字段,结果按@timestamp倒序排列:
+http://ip:9200/log_avro-2020.08.244/_search
+{
+    "query":{
+        "match":{
+            "id":20289
+        }
+    },
+    "sort": { "@timestamp": { "order": "desc" }}
+}
