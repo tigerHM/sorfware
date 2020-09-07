@@ -4,3 +4,6 @@ https://www.json.org/
 
 avro:
 http://avro.apache.org/docs/1.8.2/spec.html
+
+在avro的报下有个工具类:avro-tools-1.8.0.jar
+例如:java -jar avro-tools-1.8.0.jar tojson 参数1(avro文件) 参数2(json文件)
