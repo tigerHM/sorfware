@@ -14,3 +14,12 @@ import sys  ##引入 python 标准库中的 sys.py 模块
 让你从模块中导入一个指定的部分到当前命名空间中
 例如:
 
+在Python中提供了标准库来使用.如:
+操作系统接口:os
+命令行参数:sys
+字符串正则匹配:re
+数学:math,random
+日期时间:date
+数据压缩:gzip
+网络:urllib,smtplib
+具体有哪些可以到:https://www.runoob.com/python3/python3-stdlib.html
