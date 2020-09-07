@@ -1,0 +1,6 @@
+tcpdump命令用于倾倒网络传输数据。
+详细介绍:https://www.runoob.com/linux/linux-comm-tcpdump.html
+
+
+常用:
+tcpdump -i 网卡 tcp port 监听端口 -w ./存包名
