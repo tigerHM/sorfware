@@ -1,0 +1,50 @@
+为java应用编写启动shell脚本
+
+#!/bin/bash
+#配置环境变量
+JAVA_HOME=/usr/local/jdk8
+PATH=$JAVA_HOME/bin:$PATH
+
+#配置java应用名
+appName=xxx
+
+#配置日志输出文件(需要与log4j或者logback中的配置对应)
+
+cd `dirname $0`
+bin_dir=`pwd`
+
+BASE_DIR=$(cd "${bin_dir}" && cd .. && pwd)
+
+STDOUT_FILE=$BASE_DIR/logs/stdout.log
+
+##配置jar包的所在目录及名称(这里的应用采用了spring的assembly的打包方式,需要在pom里或者在assembly.xml的配置中给定打包输出的jar包名称)
+MAIN_JAR=$bin_dir/XXXX.jar
+
+##配置java参数
+
+parameter="-Dloader.path=../lib,../config"
+parameter="$parameter -Dapplication.name=$appName"
+
+
+#-Xmx3550m:设置JVM最大可用内存为3550M.等价于 -XX:MaxHeapSize.
+#-Xms3550m:设置JVM初始内存为3550m.等价于 -XX:initialHeapSize.此值可以设置与-Xmx相同,以避免每次垃圾回收完成后JVM重新分配内存.
+#-Xmn2g:设置年轻代大小为2G.
+
+#-XX:+UseG1GC   使用 G1 (Garbage First) 垃圾收集器,它会从内存中删除垃圾对象  
+#-XX:+UseStringDeduplication  从内存中删除重复的字符串对象
+#-XX:InitiatingHeapOccupancyPercent=n 启动并发GC周期时的堆内存占用百分比. G1之类的垃圾收集器用它来触发并发GC周期,基于整个堆的使用率,而不只是某一代内存的使用比. 值为 0 则表示"一直执行GC循环". 默认值为 45.
+#-XX:+PrintGCDetails         打印GC详细信息
+#-XX:+HeapDumpOnOutOfMemoryError  OOM时导出堆到文件
+
+java_param="-Xmx3550m -Xms3550m -Xmn2g"
+java_param="$java_param -"
+
+java -jar $java_param $parameter $MAIN_JAR > /$STDOUT_FILE 2>&1 &
+
+pid=$!
+sleep 10s
+if ps -p $pid > /dev/null; then
+  echo "$appName is running."
+else 
+  echo "$appName startup failed."
+fi 
