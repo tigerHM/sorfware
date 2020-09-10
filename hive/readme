@@ -28,4 +28,9 @@ hive桶表最大限度的保证了每个桶中的文件中的数据量大致相�
 参考hive分区表和桶表的比较:https://blog.csdn.net/db_guy/article/details/78742071
 
 
+hivesql语法总结:
+1.hive不支持等值连接,两表管理需要join..on()来实现
 
+2.特殊符号最好使用八进制的ASCII码进行转义
+
+3.sql嵌套查询使用别名
