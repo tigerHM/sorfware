@@ -20,3 +20,5 @@ lowercaseOutputName: true
   - job_name: 'jmx_exproter'
     static_configs:
     - targets: ['ip:9991',"ip:9991","ip:9991"]
+
+4.将数据加到grafana图表中(省略)
