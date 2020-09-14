@@ -1,1 +1,27 @@
+Python 练习
+使用的是Python3
+python2.x和python3.x的区别可以查看:https://www.runoob.com/python/python-2x-3x.html
+
+
+1.利润提成按分段比例
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+if __name__ == '__main__':
+    i = int(input("输入:"))
+    arr = [1000000, 600000, 400000, 200000, 100000, 0]
+    rat = [0.01, 0.015, 0.03, 0.05, 0.075, 0.1]
+    r = 0
+
+    for index in range(0, 6):
+        if i > arr[index]:
+            r += (i - arr[index]) * rat[index]
+            i = arr[index]
+
+    print(r)
+    
+2.
+
+
+
 
