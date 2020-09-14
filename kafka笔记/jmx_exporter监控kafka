@@ -1,0 +1,22 @@
+kafka集群监控
+架构:jmx_exporter+Prometheus+grafana
+这里记录kafka配置
+
+1.修改kafka启动配置
+找到kafka安装目录的bin目录下的kafka-server-start.sh里面插入:
+##这个端口是kafka的jmx端口,提供给jmx_exporter用
+export JMX_PORT="9890"
+##下面这个是启动一个jar任务,9991端口是提供给Prometheus使用的.-javaagent:后面分别是jmx_exporter的jar包绝对路径,端口,配置
+export KAFKA_OPTS="-javaagent:/usr/local/jmx_prometheus_javaagent-0.13.0.jar=9991:/usr/local/jmx_config.yml"
+
+2.准备jmx_config.yml配置
+具体详细配置参考官网:https://github.com/prometheus/jmx_exporter
+我里面简单:
+hostPort: 127.0.0.1:9890
+lowercaseOutputName: true
+
+3.修改prometheus.yml配置:
+添加一个job:
+  - job_name: 'jmx_exproter'
+    static_configs:
+    - targets: ['ip:9991',"ip:9991","ip:9991"]
