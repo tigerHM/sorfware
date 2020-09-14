@@ -1,0 +1,9 @@
+ES的索引管理
+
+参考:https://www.jianshu.com/p/2ddd40d8a338
+
+ES7.0版本提供ILM策略进行es-stack的组件生命周期管理功能；
+ES6.x及以下版本使用elasticsearch-curator进行索引策略动作；
+
+
+官网有使用ILM使用文档说明:https://www.elastic.co/guide/en/elasticsearch/reference/7.9/index-lifecycle-management.html
