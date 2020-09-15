@@ -1,0 +1,8 @@
+nifi启动失败问题:
+
+
+1.在日志中发现下面语句:
+INFO [main] org.apache.nifi.properties.ConfigEncryptionTool: No unencrypted password property elements found in authorizers.xml
+Cannot load flow.xml.gz
+
+解决方法: 从集群内其它机器上拷贝  路径:/var/lib/nifi/conf/flow.xml.gz
