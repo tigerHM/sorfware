@@ -33,3 +33,19 @@ http://ip:9200/log_avro-2020.08.244/_search
     },
     "sort": { "@timestamp": { "order": "desc" }}
 }
+
+
+
+对数字字段进行范围查找:
+url省略
+{"query":{
+		"filtered":{
+			"filter":{
+				"terms":{
+					"event_time":[1600242507089,1600242557089]
+					}
+				}
+			}
+		},
+		"size":10
+	}
