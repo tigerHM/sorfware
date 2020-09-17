@@ -1,0 +1,34 @@
+Prometheus清理数据
+
+在prometheus提供的HTTP api中,提供了对数据清理的接口.
+官网:https://prometheus.io/docs/prometheus/latest/querying/api/?spm=a2c6h.12873639.0.0.cbb01760zeVL3K#tsdb-admin-apis
+参考文章:https://developer.aliyun.com/article/742414
+
+官方到现在一共提供了三个接口，对应的分别是快照功能、数据删除功能、数据清理功能，
+想要使用 API 需要先添加启动参数 --web.enable-admin-api 打开这个接口，默认这个接口是关闭的。
+
+分别是:
+Snapshot(快照)
+
+Delete Series(删除)
+DeleteSeries deletes data for a selection of series in a time range. The actual data still exists on disk and is cleaned up in future compactions or can be explicitly 
+cleaned up by hitting the Clean Tombstones endpoint.
+URL query parameters:
+
+match[]=<series_selector>: Repeated label matcher argument that selects the series to delete. At least one match[] argument must be provided.
+start=<rfc3339 | unix_timestamp>: Start timestamp. Optional and defaults to minimum possible time.
+end=<rfc3339 | unix_timestamp>: End timestamp. Optional and defaults to maximum possible time.
+Not mentioning both start and end times would clear all the data for the matched series in the database.
+
+例如:
+删除指定 Metric 名称的全部数据
+$ curl -X POST -g 'http://127.0.0.1:9090/api/v1/admin/tsdb/delete_series?match[]=node_cpu_seconds_total'
+
+删除指定时间范围内的 Metric 数据
+$ curl -X POST -g 'http://127.0.0.1:9090/api/v1/admin/tsdb/delete_series?start=1578301194&end=1578301694&match[]=node_cpu_seconds_total{mode="idle"}'
+
+Clean Tombstones(清理墓碑)
+CleanTombstones removes the deleted data from disk and cleans up the existing tombstones. This can be used after deleting series to free up space.
+例如:
+$ curl -XPOST http://localhost:9090/api/v1/admin/tsdb/clean_tombstones
+
