@@ -139,3 +139,8 @@ offset=30
 target_date=`date +'%Y%m%d %H:%M' -d "${offset} minutes ago"`
 target_day=`date +'%Y%m%d' -d "${offset} minutes ago"`
 target_hour=`date +'%H' -d "${offset} minutes ago"`
+
+获取某天在一年当中的天数:
+`date -d "200 days ago"  "+%-j"`
+- 符号是会把时分秒中无意义的 0 给去掉.
+ 
