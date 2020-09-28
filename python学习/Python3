@@ -20,7 +20,27 @@ if __name__ == '__main__':
 
     print(r)
     
-2.
+2.requests包的使用
+
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+import requests
+
+if __name__ == '__main__':
+
+    # requests包使用get方法
+    response1 = requests.get("http://xxxxxxxx:9200/_cat/nodes")
+    response__text = response1.text
+    response_code = response1.status_code
+    print(response__text)
+
+    # requests包使用post方法,bing定制请求头
+    data = {'some': 'data'}
+    headers = {'content-type': 'application/json',
+               'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:22.0) Gecko/20100101 Firefox/22.0'}
+
+    response2 = requests.post('https://xxxxxxx.com', data=data, headers=headers)
 
 
 
