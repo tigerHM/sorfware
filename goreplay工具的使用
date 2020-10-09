@@ -1,0 +1,18 @@
+什么是goreplay?
+官网链接:https://github.com/buger/goreplay
+GoReplay is an open-source network monitoring tool which can record your live traffic, and use it for shadowing, load testing, monitoring and detailed analysis.
+
+参考内容:https://www.jianshu.com/p/501218e0beb1
+
+简单来说,主要功能是goreplay抓取线上真实的流量，并将捕捉到的流量转发到测试服务器上.
+
+使用案例:
+1.适用在网络隔离环境中进行
+录制流量:(拷贝本机8888端口,请求路径是/v1/xxx的流量,保存到%Y%m%d_xxx-service.gor输出文件中,可以设置输出文件的大小)
+./gor --input-raw :8888 --output-file %Y%m%d_xxx-service.gor --output-file-append (--output-file-max-size-limit 4mb) --http-original-host --http-allow-url /v1/xxx
+重放流量(从流量输出文件中的数据转发到本地8060端口):
+./gor --input-file "20200415_xxx-service.gor"  --output-http http://127.0.0.1:8060
+
+2.
+拷贝本机80端口转发到主机192.168.10.12的28020端口,保留原始请求头信息,并输出延迟状态.
+./gor –input-raw :80 –output-tcp 192.168.10.12:28020 –output-tcp-stats=true –stats=true –http-original-host
