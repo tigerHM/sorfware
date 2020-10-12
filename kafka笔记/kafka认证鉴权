@@ -48,7 +48,7 @@ sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
 security.inter.broker.protocol=SASL_PLAINTEXT
 
 7，滚动重启所有服务器。重启完后的状态：kakfa同时允许认证和非认证方式访问，kafka之间采用认证方式访问
-8，推动业务方进行修改，在客户端增加认证，修改过程中配合增加用户和授权。具体命令参考：https://docs.confluent.io/current/kafka/authorization.html，举例：
+8，在客户端增加认证，修改过程中配合增加用户和授权。举例：
 授权用户写某Topic
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --add \
 --allow-principal User:'kafka_test' --allow-host '*' \
