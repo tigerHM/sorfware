@@ -65,7 +65,7 @@ bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --rem
 删除用户写任意topic
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --remove --allow-principal User:'kafka_test' --operation Write  --topic '*'  --allow-host '*'
 
-9，业务修改完以后。修改server.properties配置
+9 修改server.properties配置
 listeners=SASL_PLAINTEXT://:9094   //关闭非认证端口
 super.users=User:admin    //禁止匿名用户
 
