@@ -11,82 +11,55 @@ OAUTH： 基于OAUTH2认证
 授权
 Kafka通过authorizer.class.name配置属性指定授权实现类，我们使用Kafka自带的实现kafka.security.auth.SimpleAclAuthorizer，该实现会将权限信息保存到ZK里。
 
-实施
-1，在Kafka配置目录添加 kafka_server_jaas.conf文件
+KAFKA集群使用(SASL_PLAINTEXT:SCRAM-SHA-256)鉴权:
+除了正常配置集群外的SASL;
+server.properties需要添加配置:
+listeners=SASL_PLAINTEXT://hadoop-01:9094    ##打开认证通信端口
+security.inter.broker.protocol=SASL_PLAINTEXT   ##指定服务器间通信方式为SASL_PLAINTEXT
+sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256    
+sasl.enabled.mechanisms=SCRAM-SHA-256   ##打开sasl并指定认证方式
+authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer
+super.users=User:admin  ##超级用户
+allow.everyone.if.no.acl.found=false
+
+config目录添加kafka_server_jaas.conf:
 KafkaServer {
     org.apache.kafka.common.security.scram.ScramLoginModule required
     username="admin"
-    password="xxxx";             //这里指定的用户名密码是kafka服务器之间通信用的用户名密码
+    password="admin";
 };
 
-2， 根据Kafka部署的不同，在适当位置增加以下配置，目的是使jaas配置生效
-export KAFKA_OPTS=$KAFKA_OPTS" -Djava.security.auth.login.config=/kafka_config_path/kafka_server_jaas.conf"
+启动集群前执行:
+./bin/kafka-configs.sh --zookeeper localhost:2181 --alter --add-config 'SCRAM-SHA-256=[iterations=8192,password=admin]' --entity-type users --entity-name admin
 
-3，修改server.properties配置
-sasl.enabled.mechanisms=SCRAM-SHA-256         //打开SASL并指定认证方式
-security.inter.broker.protocol=PLAINTEXT            //指定服务器间通信方式为PALINTEXT，暂时不用认证
-listeners=PLAINTEXT://:9092,SASL_PLAINTEXT://:9094     //同时打开认证和非认证方式通信端口
-
-allow.everyone.if.no.acl.found=false     
-authorizer.class.name=kafka.security.auth.SimpleAclAuthorizer     //指定授权方式
-super.users=User:admin;User:xxxx    //指定超级用户，超级用户不受ACL管控。admin为服务器间通信用户必须为超级用户，xxxx是非认证方式连接kafka时的用户，配置是为了历史兼容
-
-4，使用kafka命令添加admin账号和其他账号
-增加用户(SCRAM-SHA-256认证方式,xxxx为实际的密码)
-bin/kafka-configs.sh --zookeeper localhost:2181 --alter --add-config 'SCRAM-SHA-256=[iterations=8192,password=xxxx]' --entity-type users --entity-name kafka_test
-
-描述用户
-bin/kafka-configs.sh --zookeeper localhost:2182 --describe --entity-type users --entity-name kafka_test
-
-删除用户
-bin/kafka-configs.sh --zookeeper localhost:2182 --alter  --delete-config 'SCRAM-SHA-256' --entity-type users --entity-name kafka_test
-
-5，滚动重启所有服务器。重启完后的状态：kakfa同时允许认证和非认证方式访问，kafka之间采用非认证方式访问
-6，修改server.properties配置
-sasl.mechanism.inter.broker.protocol=SCRAM-SHA-256
-
-security.inter.broker.protocol=SASL_PLAINTEXT
-
-7，滚动重启所有服务器。重启完后的状态：kakfa同时允许认证和非认证方式访问，kafka之间采用认证方式访问
-8，在客户端增加认证，修改过程中配合增加用户和授权。举例：
-授权用户写某Topic
+权限分配:
+授权用户写某Topic:
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --add \
 --allow-principal User:'kafka_test' --allow-host '*' \
 --operation Write --topic KAFKA_TEST_TOPIC
 
-授权用户通过某group读某topic(xxxx为消费组名)
+授权用户通过某group读某topic(xxxx为消费组名):
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --add \
 --allow-principal User:'kafka_test' --allow-host '*' \
 --operation Read --topic KAFKA_TEST_TOPIC --group xxxx
 
-删除用户随意读任意topic，（注意：如果存在一个groupId读取多个topic的情况，删除的时候会将所有topic的读取权限删除，所以删除时点确认需谨慎）
+删除用户随意读任意topic:（注意：如果存在一个groupId读取多个topic的情况，删除的时候会将所有topic的读取权限删除，所以删除时点确认需谨慎）
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --remove --allow-principal User:'kafka_test' --operation Read  --topic '*' --group '*' --allow-host '*'
 
-删除用户写任意topic
+删除用户写任意topic:
 bin/kafka-acls.sh --authorizer-properties zookeeper.connect=localhost:2181 --remove --allow-principal User:'kafka_test' --operation Write  --topic '*'  --allow-host '*'
 
-9 修改server.properties配置
-listeners=SASL_PLAINTEXT://:9094   //关闭非认证端口
-super.users=User:admin    //禁止匿名用户
 
-10，滚动重启所有服务器。重启完后的状态：kakfa只允许认证方式访问
-客户端修改
-客户端要修改代码使用认证方式连接kafka，主要的目的是：1，使用新的认证端口；2，配置认证方式和用户名
-java需要增加如下:
-properties.put("bootstrap.servers", "kafka1:9094,kafka2:9094");##调整为鉴权端口
-properties.put("sasl.jaas.config", "org.apache.kafka.common.security.scram.ScramLoginModule required\n" + "username=\"USER_NAME\"\n" + "password=\"PASSWORD\";"); ##USER_NAME,PASSWORD需要替换为实际值
-properties.put("security.protocol", "SASL_PLAINTEXT");
-properties.put("sasl.mechanism", "SCRAM-SHA-256");
-
-
-控制台消费:
-./kafka-console-consumer.sh --topic topic_name --bootstrap-server kafka1:9094 --from-beginning --consumer.config /tmp/consumer.properties
-
-在机器下添加/tmp/consumer.properties:
+测试:
+控制台生产者
+./bin/kafka-console-producer.sh --broker-list hadoop-01:9094 --topic testtopic --producer.config /tmp/producer.properties
+/tmp/producer.properties:
 sasl.jaas.config=org.apache.kafka.common.security.scram.ScramLoginModule required \
-username="replace_by_your_username" \
-password="replace_by_your_password";
-​
+username="admin" \
+password="admin";
+
 security.protocol=SASL_PLAINTEXT
 sasl.mechanism=SCRAM-SHA-256
-group.id=replace_by_your_groupid
+
+控制台消费者(配置内容和producer.properties一致)
+./kafka-console-consumer.sh --topic testtopic --bootstrap-server hadoop-01:9094 --from-beginning --consumer.config /tmp/consumer.properties
