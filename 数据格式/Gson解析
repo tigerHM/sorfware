@@ -1,0 +1,5 @@
+Gson（又称Google Gson）是Google公司发布的一个开放源代码的Java库，主要用途为序列化Java对象为JSON字符串，或反序列化JSON字符串成Java对象。而JSON(JavaScript Object Notation) 是一种轻量级的数据交
+换格式，易于人阅读和编写，同时也易于机器解析和生成，广泛应用于各种数据的交互中，尤其是服务器与客户端的交互。
+
+参考文档:
+https://www.jianshu.com/p/fc5c9cdf3aab
