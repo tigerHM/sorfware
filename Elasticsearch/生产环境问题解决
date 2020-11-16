@@ -1,0 +1,13 @@
+1.某产品依赖ES存储数据进去数据的展示查询等功能,产品突然没有数据了:
+登录es节点:
+curl -XGET http://localhost:9200/_cat/indices
+显示索引正常.
+查看日志发现下面的:
+org.elasticsearch.transport.NodeNotConnectedException: [xxxx][xxxx:9300] Node not connected
+[gc][1536081] overhead, spent [108ms] collecting in the last [1s]
+
+搜一下:参考该文档https://blog.csdn.net/jojoy_828/article/details/89052406
+找到解决方法:
+修改elasticsearch.yml:
+discovery.zen.fd.ping_timeout: 100s
+discovery.zen.fd.ping_retries: 5
