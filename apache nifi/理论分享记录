@@ -1,0 +1,4 @@
+NIFI文档
+
+NiFi Connection是在两个已连接的NiFi处理器组件之间临时保存FlowFiles的位置。
+分享文档:https://cloud.tencent.com/developer/article/1690396
