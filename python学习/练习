@@ -69,5 +69,10 @@ print (basename)
 
 OS模块提供系统文件相关操作,可以参考:https://www.runoob.com/python/os-file-methods.html
 
+python中下划线的使用:
+参考:
+https://cloud.tencent.com/developer/article/1516883
+
+
 示例5:
 
