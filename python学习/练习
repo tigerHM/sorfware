@@ -61,3 +61,12 @@ if __name__ == '__main__':
 [(1, 1, 1), (2, 2, 2), (3, 3, 3)]
 [(2, 1), (4, 4), (6, 9)]
 
+
+示例4:##获取当前文件的绝对路径和文件名:
+basename = os.path.basename(__file__)
+print (__file__)
+print (basename)
+
+
+示例5:
+
