@@ -67,6 +67,7 @@ basename = os.path.basename(__file__)
 print (__file__)
 print (basename)
 
+OS模块提供系统文件相关操作,可以参考:https://www.runoob.com/python/os-file-methods.html
 
 示例5:
 
