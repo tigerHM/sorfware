@@ -1,0 +1,57 @@
+Filebeat
+是ELK技术栈中的轻量级文件采集组件.
+官方文档:https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html
+
+示例1:
+从日志文件采集日志发送到kafka
+配置filebeat.yml:
+filebeat.inputs:
+- type: log
+  paths:
+    - /tmp/test_filebeat/*.log
+
+output.kafka:
+  hosts: ["xxxx:9092", "xxxx:9092", "xxxx:9092"]
+  topic: 'test_filebeat'
+  partition.round_robin:
+    reachable_only: false
+  required_acks: 1
+  compression: none
+  max_message_bytes: 1000000
+  
+kafka控制台消费得到:
+{
+    "@timestamp":"2020-12-21T08:18:40.248Z",
+    "@metadata":{
+        "beat":"filebeat",
+        "type":"_doc",
+        "version":"7.10.1"
+    },
+    "host":{
+        "name":"xxxx"
+    },
+    "agent":{
+        "ephemeral_id":"xxxxxxxxxxxx",
+        "id":"xxx ",
+        "name":"xxx",
+        "type":"filebeat",
+        "version":"7.10.1",
+        "hostname":"xxxx"
+    },
+    "log":{
+        "offset":72,
+        "file":{
+            "path":"/tmp/test_filebeat/test.log"
+        }
+    },
+    "message":"消息内容",
+    "input":{
+        "type":"log"
+    },
+    "ecs":{
+        "version":"1.6.0"
+    }
+}
+
+
+示例2:
