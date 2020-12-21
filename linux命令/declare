@@ -1,0 +1,7 @@
+declare命令用于声明 shell 变量。
+参考:https://www.runoob.com/linux/linux-comm-declare.html
+
+
+示例:
+declare -a cd='([0]="a" [1]="b" [2]="c")' //声明数组变量
+echo ${cd[1]}
