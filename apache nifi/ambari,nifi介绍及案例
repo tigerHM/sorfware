@@ -5,6 +5,9 @@ Apache Ambari
 节点添加：https://cwiki.apache.org/confluence/display/AMBARI/Add+a+host+and+deploy+components+using+APIs
 详细安装步骤：https://cwiki.apache.org/confluence/display/AMBARI/Installation+Guide+for+Ambari+2.5.2
 
+一些总结文档:
+https://developer.ibm.com/zh/technologies/analytics/articles/os-cn-bigdata-ambari/
+
 
 Apache Nifi
 官网介绍：易于使用，功能强大且可靠的系统，用于处理和分发数据。
