@@ -1,0 +1,28 @@
+openpyxl处理excel:
+
+读取ecel
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+import openpyxl
+
+if __name__ == '__main__':
+    data = openpyxl.load_workbook("C:\\Users\\Administrator\\Documents\\test.xlsx")
+    sheetnames = data.sheetnames
+
+    table = sheetnames[0]
+    sheets_1 = data.worksheets[0]
+    print(table)
+
+    minrow = sheets_1.min_row  # 最小行
+    maxrow = sheets_1.max_row  # 最大行
+    mincol = sheets_1.min_column  # 最小列
+    maxcol = sheets_1.max_column  # 最大列
+
+    # 按行读取
+    for i in range(minrow, maxrow + 1):
+        string =""
+        for j in range(mincol, maxcol + 1):
+            cell = sheets_1.cell(i, j).value
+            string=string+"%s" %(cell)+" "
+        print(string)
