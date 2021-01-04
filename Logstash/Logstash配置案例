@@ -182,3 +182,5 @@ output {
 }
 
 
+示例6:Logstash修改@timestamp时间为日志的产生时间
+参考:https://blog.csdn.net/wsdc0521/article/details/106307452
