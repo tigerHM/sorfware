@@ -42,3 +42,10 @@ kafka消费数据:
 
 3.java零拷贝
 https://developer.ibm.com/articles/j-zerocopy/
+
+
+4.kafka副本就是备份日志,来实现系统的高可用性.
+Kafka的副本具有leader副本和follower副本之分，leader副本为客户端提供读写请求，follower副本只是用于被动地从leader副本中同步数据，对外不提供读写服务。
+ISR的概念参考:
+https://cloud.tencent.com/developer/article/1595175
+
