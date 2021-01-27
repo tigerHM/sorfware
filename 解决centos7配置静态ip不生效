@@ -1,3 +1,5 @@
 centos7配置静态ip不生效
-
 https://blog.csdn.net/weixin_37569048/article/details/96852643
+
+设置 hostname的常用方式：
+https://linux.cn/article-10651-1.html
