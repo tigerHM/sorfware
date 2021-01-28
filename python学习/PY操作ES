@@ -1,0 +1,33 @@
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+import elasticsearch
+
+def main():
+    es = elasticsearch.client.Elasticsearch(
+        ['xxx:9200', 'xxx:9200'],
+        # 在做任何操作之前，先进行嗅探
+        sniff_on_start=True,
+        # 节点没有响应时，进行刷新，重新连接
+        sniff_on_connection_fail=True,
+        # 每 60 秒刷新一次
+        sniffer_timeout=60)
+    ## 测试集群是否启动
+    status = es.ping()
+    print(status)
+    ## 查看集群信息
+    info = es.info()
+    print(info)
+    #查询索引信息
+    indices = es.cat.indices()
+    print(indices)
+
+    #插入一条数据(参数是索引名和数据(json))
+    es.index(index="",body="{}")
+    # bulkAPI可以实现批量插入,elasticsearch模块的helpers，helpers是bulk的帮助程序，是对bulk的封装。
+    # 有三种方式bulk（）,streaming_bulk（）,parallel_bulk（）,都需要接受Elasticsearch类的实例和一个可迭代的actions.actions里面的操作可以有多种。
+    
+    #删除一条数据
+    es.delete(index="",id=11)
+    
+if __name__ == '__main__':
+    main()
