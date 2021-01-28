@@ -1,3 +1,6 @@
+官方文档api讲解
+文档地址:https://elasticsearch-py.readthedocs.io/en/master/api.html
+
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import elasticsearch
