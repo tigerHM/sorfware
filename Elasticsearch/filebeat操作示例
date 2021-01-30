@@ -2,6 +2,9 @@ Filebeat
 是ELK技术栈中的轻量级文件采集组件.
 官方文档:https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-overview.html
 
+配置参考文档:
+https://zhuanlan.zhihu.com/p/344603408
+
 示例1:
 从日志文件采集日志发送到kafka
 配置filebeat.yml:
