@@ -54,4 +54,10 @@ kafka控制台消费得到:
 }
 
 
+输出的默认格式是json.
+在官方文档中,提供了转换格式的配置进行适配其它需要.
+https://www.elastic.co/guide/en/beats/filebeat/current/configuration-output-codec.html
+例如:
+codec.format:
+    string: '%{[@timestamp]} %{[message]}'
 示例2:
