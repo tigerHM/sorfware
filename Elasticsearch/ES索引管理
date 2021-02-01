@@ -7,3 +7,6 @@ ES6.x及以下版本使用elasticsearch-curator进行索引策略动作；
 
 
 官网有使用ILM使用文档说明:https://www.elastic.co/guide/en/elasticsearch/reference/7.9/index-lifecycle-management.html
+
+在实际生产中,索引通常带上实际时间轮转
+具体配置:https://www.elastic.co/guide/cn/kibana/current/index-patterns.html
