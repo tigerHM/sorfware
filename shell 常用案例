@@ -147,3 +147,6 @@ target_hour=`date +'%H' -d "${offset} minutes ago"`
 `date -d "200 days ago"  "+%-j"`
 - 符号是会把时分秒中无意义的 0 给去掉.
  
+
+实操案例:定时监控应用脚本
+参考:https://cloud.tencent.com/developer/article/1384250
