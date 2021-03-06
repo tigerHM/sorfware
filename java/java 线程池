@@ -4,3 +4,8 @@ java自带4种线程池
 
 参考文章:
 https://www.infoq.cn/article/UK9k1rTrUPMiZrAy0QLW
+
+spring boot 中的线程池
+ThreadPoolTaskExecutor
+
+https://www.cnblogs.com/lic309/p/4186880.html
