@@ -74,5 +74,22 @@ python中下划线的使用:
 https://cloud.tencent.com/developer/article/1516883
 
 
-示例5:
+示例5:获取linux系统信息
+import platform
+
+def gefMachineInfo():
+    return platform.uname()
+
+示例6:获取linux实时内存信息
+import subprocess
+import re
+def getMemoryInfo():
+    cmd = "free"
+    p1 = subprocess.Popen(cmd,shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, err = p1.communicate()
+    if p1.returncode != 0:
+        return "null"
+    memo = output.split("\n")[1]
+    return {"MemoryInfo":{"total":re.split(r"[ ]+", memo)[1],"used":re.split(r"[ ]+", memo)[2],"free":re.split(r"[ ]+", memo)[3],"cached":re.split(r"[ ]+", memo)[6]}}
+
 
