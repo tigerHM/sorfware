@@ -93,3 +93,11 @@ def getMemoryInfo():
     return {"MemoryInfo":{"total":re.split(r"[ ]+", memo)[1],"used":re.split(r"[ ]+", memo)[2],"free":re.split(r"[ ]+", memo)[3],"cached":re.split(r"[ ]+", memo)[6]}}
 
 
+示例7:获取本机ip
+import socket
+def getLocalIp():
+    try:
+        return socket.gethostbyname(socket.getfqdn(socket.gethostname()))
+    except:
+        return "Unknown"
+
