@@ -10,3 +10,33 @@ ES6.x及以下版本使用elasticsearch-curator进行索引策略动作；
 
 在实际生产中,索引通常带上实际时间轮转
 具体配置:https://www.elastic.co/guide/cn/kibana/current/index-patterns.html
+
+
+创建索引设置mapping:
+
+{
+  "mappings": {
+    "properties": {
+      "age":    { "type": "integer" , "index": false},  
+      "email":  { "type": "keyword"  }, 
+      "name":   { "type": "text"  } ,
+      "create_date" : { "type": "date" }    
+    }
+  }
+}
+
+创建mapping模板:
+{
+  "order": 0,                            // 模板优先级，数字越大优先级越高
+  "index_patterns": ["user*"],           // 匹配该模板的索引名称正则
+  "settings": {},                        // 索引设置
+  "mappings": {
+    "properties": {
+      "age":    { "type": "integer" , "index": false},  
+      "email":  { "type": "keyword"  }, 
+      "name":   { "type": "text"  } ,
+      "create_date" : { "type": "date" }    
+    }
+  },                        			 // 索引中各字段的映射定义
+  "aliases": {}                          // 索引的别名
+}
