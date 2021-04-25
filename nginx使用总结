@@ -8,3 +8,9 @@ Nginx是一个基于c语言开发的高性能http服务器及反向代理服务�
 3.nginx作负载均衡
 
 nginx常用模块:
+
+
+
+实践:
+参考自:https://cloud.tencent.com/developer/article/1495449
+在测试环境实现流量复制功能
