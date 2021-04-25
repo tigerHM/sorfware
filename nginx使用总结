@@ -14,3 +14,11 @@ nginx常用模块:
 实践:
 参考自:https://cloud.tencent.com/developer/article/1495449
 在测试环境实现流量复制功能
+
+转发到下游保留原始信息
+location / {   
+     proxy_pass http://upstreamname;  
+     proxy_set_header  Host             $host;  
+     proxy_set_header  X-Real-IP        $remote_addr;  
+     proxy_set_header  X-Forwarded-For  $proxy_add_x_forwarded_for;  
+}  
