@@ -9,3 +9,13 @@ https://zhuanlan.zhihu.com/p/199217698
 ③当Master节点的binlog发生变化时，binlog dump 线程会通知所有的salve节点，并将相应的binlog内容推送给slave节点。
 ④I/O线程接收到 binlog 内容后，将内容写入到本地的 relay-log。
 ⑤SQL线程读取I/O线程写入的relay-log，并且根据 relay-log 的内容对从数据库做对应的操作。
+
+
+
+查看数据库各表记录数：
+use information_schema;
+select table_name,table_rows from tables  where TABLE_SCHEMA = '数据库名字'  order by table_rows desc;
+
+查看数据库表表所占的容量（表的数据和索引）：
+select sum(DATA_LENGTH)+sum(INDEX_LENGTH) from information_schema.tables where table_schema='testdb';
+得到的是字节为单位。
