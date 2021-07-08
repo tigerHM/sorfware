@@ -19,3 +19,8 @@ select table_name,table_rows from tables  where TABLE_SCHEMA = '数据库名字'
 查看数据库表表所占的容量（表的数据和索引）：
 select sum(DATA_LENGTH)+sum(INDEX_LENGTH) from information_schema.tables where table_schema='testdb';
 得到的是字节为单位。
+
+
+
+MVCC(Multi Version Concurrency Control的简称)，代表多版本并发控制。
+参考文章：https://www.jianshu.com/p/f692d4f8a53e
