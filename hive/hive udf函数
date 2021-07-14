@@ -1,8 +1,17 @@
 Hive UDF函数
+官方文档：
+https://cwiki.apache.org/confluence/display/Hive/LanguageManual+UDF#LanguageManualUDF-CreatingCustomUDFs
+
 一.Hive中有三种UDF:
 1.UDF:UDF操作作用于单个数据行，且产生一个数据行作为输出。
 2.UDAF:接受多个输入数据行，并产生一个输出数据行。
 3.UDTF:用户自定义函数
+
+相关命令：
+SHOW FUNCTIONS;      查看hive函数
+DESCRIBE FUNCTION <function_name>;    查看hive某个函数的用法
+DESCRIBE FUNCTION EXTENDED <function_name>;  查看hive某个函数更详细的用法
+
 
 二.开发自定义UDF函数有两种方式，一个是继承org.apache.hadoop.hive.ql.exec.UDF，另一个是继承org.apache.hadoop.hive.ql.udf.generic.GenericUDF；
 继承org.apache.hadoop.hive.ql.udf.generic.GenericUDF之后，需要重写几个重要的方法：
@@ -18,6 +27,15 @@ public String getDisplayString(String[] children)
 //必选，显示函数的帮助信息
 public void close(){}
 //可选，map完成后，执行关闭操作
+
+主要开发步骤：
+1.maven工程中pom.xml添加对应版本依赖
+2.主函数继承UDF类或者GenericUDF并重写对应的方法
+3.打包编译生成jar包上传到hdfs路径
+4.添加函数，创建临时或永久函数：
+CREATE FUNCTION 方法名 AS  类名  USING JAR 'hdfs包路径'
+
+
 
 
 示例:计算两个日期的时间差
