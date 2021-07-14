@@ -1,0 +1,31 @@
+
+案例1：
+ String[] strs= {"app_123","application_1433865536131_34483","Application_1433865536131_34411"};
+
+//        Pattern pattern1 = Pattern.compile("^([a-zA-Z_]+)(\\d+_)\\d+$");
+        Pattern pattern2 = Pattern.compile("^(application_)(\\d+_)\\d+$");
+        for (String s:strs
+             ) {
+            Matcher matcher = pattern1.matcher(s);
+            if(matcher.find())
+            {
+                System.out.println(matcher.group());
+            }else{
+                System.out.println("nothing");
+            }
+        }
+结果：
+使用pattern1：
+nothing
+application_1433865536131_34483
+Application_1433865536131_34411
+
+使用pattern2：
+nothing
+application_1433865536131_34483
+nothing
+
+
+案例2：
+邮箱号提取
+Pattern emailer = Pattern.compile("^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$")
