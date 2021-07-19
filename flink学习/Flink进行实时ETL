@@ -12,6 +12,8 @@ Flink实时读取Mysql数据库中增量日志数据：
 
 广播变量使用：
 参考：https://www.codercto.com/a/108010.html
+https://blog.csdn.net/wangpei1949/article/details/99698978
+
 
 MAP方法操作数据库：
 https://blog.csdn.net/chentangdan2377/article/details/101000408
