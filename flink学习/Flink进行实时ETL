@@ -1,2 +1,14 @@
 参考博客:
 http://shzhangji.com/cnblogs/2018/12/30/real-time-exactly-once-etl-with-apache-flink/
+
+
+Flink实时读取Mysql数据库中增量日志数据：
+参考：https://blog.csdn.net/leaeason/article/details/107316704
+
+
+双流connect的用法：
+参考：https://blog.csdn.net/weixin_42155491/article/details/105333833
+
+
+MAP方法操作数据库：
+https://blog.csdn.net/chentangdan2377/article/details/101000408
