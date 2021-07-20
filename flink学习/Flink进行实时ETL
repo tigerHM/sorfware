@@ -2,6 +2,11 @@
 http://shzhangji.com/cnblogs/2018/12/30/real-time-exactly-once-etl-with-apache-flink/
 
 
+flink cdc:
+参考：
+https://cloud.tencent.com/developer/article/1757861
+https://www.jianshu.com/p/22ab72c270cd#flink%E6%B6%88%E8%B4%B9cdc%E6%95%B0%E6%8D%AE
+
 Flink实时读取Mysql数据库中增量日志数据：
 参考：https://blog.csdn.net/leaeason/article/details/107316704
 
