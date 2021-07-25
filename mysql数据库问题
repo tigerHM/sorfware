@@ -24,3 +24,25 @@ select sum(DATA_LENGTH)+sum(INDEX_LENGTH) from information_schema.tables where t
 
 MVCC(Multi Version Concurrency Control的简称)，代表多版本并发控制。
 参考文章：https://www.jianshu.com/p/f692d4f8a53e
+
+
+
+在8.0后的mysql版本中，函数支持窗口函数：rank(),LEAD(),ROW_NUMBER()等.
+官网通过比对版本的文档可以看到：
+https://dev.mysql.com/doc/refman/5.7/en/
+
+mysql实现排序：（使用的版本：5.7.31）
+场景1.全局按某个字段排序,输出排名情况
+SELECT emp_no, salary, from_date, @curRank := @curRank + 1 AS rank FROM salaries, (SELECT @curRank := 0) q ORDER BY salary;
+得到如下：
++--------+--------+------------+------+
+| emp_no | salary | from_date  | rank |
++--------+--------+------------+------+
+|  10003 |  43311 | 2001-12-01 |    1 |
+|  10002 |  72527 | 2001-08-02 |    2 |
+|  10004 |  72527 | 2001-12-01 |    3 |
+|  10001 |  88958 | 2002-06-22 |    4 |
+
+场景2.按某个字段实现分组排序,输出排名情况
+
+
