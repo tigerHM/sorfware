@@ -31,6 +31,9 @@ MVCC(Multi Version Concurrency Control的简称)，代表多版本并发控制�
 官网通过比对版本的文档可以看到：
 https://dev.mysql.com/doc/refman/5.7/en/
 
+其它方式实现类似rank()功能的方法：
+参考：https://www.jianshu.com/p/bb1b72a1623e
+
 mysql实现排序：（使用的版本：5.7.31）
 场景1.全局按某个字段排序,输出排名情况
 SELECT emp_no, salary, from_date, @curRank := @curRank + 1 AS rank FROM salaries, (SELECT @curRank := 0) q ORDER BY salary;
