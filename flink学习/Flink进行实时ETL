@@ -26,3 +26,7 @@ https://blog.csdn.net/chentangdan2377/article/details/101000408
 
 FLINK作业停止的两种方式：
 参考：https://blog.csdn.net/Black_8/article/details/107863652
+
+
+概念：flink的Checkpoint和Savepoint异同
+参考：https://zhuanlan.zhihu.com/p/79526638
