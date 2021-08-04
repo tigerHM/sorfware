@@ -6,3 +6,6 @@ hive有些函数在生产工作中常用
 
 还有hive的窗口函数对数据进行分析计算
 https://cwiki.apache.org/confluence/display/Hive/LanguageManual+WindowingAndAnalytics
+
+
+参考：https://zhuanlan.zhihu.com/p/70123661
