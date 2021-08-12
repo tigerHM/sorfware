@@ -287,3 +287,69 @@ public class Main {
         }
     }
 }
+
+
+
+11.优先队列
+/**
+ * //向量类 Vector
+ * 实现一个优先队列（类似最大堆或者最小堆）
+ *
+ */
+public class Heap {
+    private Vector vector=new Vector();
+
+    public Object top() {
+        return vector.firstElement();
+    }
+
+    //添加
+    public void push(int k) {
+        //插入放到最后一位 上浮
+        vector.addElement(new Integer(k));
+        up(vector.size()-1);
+    }
+
+    //删除最大值
+    public void pop() {
+        vector.remove(0);
+    }
+
+    //上浮
+    private void up(int i) {
+
+        while (i > 0 && ((Integer) vector.elementAt(i / 2) < (Integer) vector.elementAt(i))) {
+            Object big = vector.elementAt(i);
+            Object small = vector.elementAt(i / 2);
+            vector.set(i,small);
+            vector.set(i / 2,big);
+            up(i /=2);
+        }
+    }
+
+    private void print(){
+        Enumeration elements = vector.elements();
+        while (elements.hasMoreElements()){
+            System.out.println(elements.nextElement());
+        }
+    }
+
+    //测试
+    public static void main(String[] args) {
+        Heap heap = new Heap();
+
+        heap.push(4);
+        heap.push(7);
+        heap.push(1);
+        heap.push(8);
+        heap.push(6);
+
+        heap.print();
+
+        heap.top();
+        System.out.println(heap.top().toString());
+
+        heap.pop();
+        heap.print();
+    }
+}
