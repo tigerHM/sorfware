@@ -1,0 +1,17 @@
+参考链接：https://www.jianshu.com/p/a36d52b7be31
+hive 整合 hbase 为用户提供一种 sqlOnHbase 的方法。Hive 与 HBase 整合的实现是利用两者本身对外的 API 接口互相通信来完成的，其具体工作交由 Hive 的 lib 目录中的 
+hive-hbase-handler-xxx.jar 工具类来实现对 HBase 数据的读取。
+Hive 和 HBase 通过接口互通，用户可以方便地通过 SQL 接口进行建表、映射表、查询、删除等操作。 使用 Hive 操作 HBase 中的表，只是提供了便捷性，由于对于 hiveOnHbase 表的查询走 MR 框架，
+因此查询效率较为缓慢需酌情使用。
+Hive 集成 HBase 可以有效利用 HBase 数据库的存储特性，如行更新和列索引等。在集成的过程中注意维持 HBase jar 包的一致性。Hive 集成 HBase 需要在 Hive 表和 HBase 表之间建立映射关系，
+也就是 Hive 表的列 (columns) 和列类型(column types)与 HBase 表的列族(column families)及列限定词(column qualifiers)建立关联。
+每一个在 Hive 表中的域都存在于 HBase 中，而在 Hive 表中不需要包含所有HBase 中的列。HBase 中的 RowKey 对应到 Hive 中为选择一个域使用 :key 来对应，列族(cf:)映射到 Hive 中的其它所有域，列为(cf:cq)。
+
+测试语句：
+构建hive表映射hbase(数据在hive,在hbase中提供一张表)
+create table ashive1.hivehbase_people(id int,name string,info string) stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' with serdeproperties ("hbase.columns.mapping" = ":key,basic_info:name,basic_info:info") tblproperties("hbase.table.name" = "test_db:testPerson","hbase.mapred.output.outputtable" = "test_db:testPerson");
+
+
+构建hbase表映射到hive中（hbase表已存在）
+通过外部表方式CREATE EXTERNAL TABLE 
+create external table employee_info(id int,age int,sex string) stored by 'org.apache.hadoop.hive.hbase.HBaseStorageHandler' with serdeproperties("hbase.columns.mapping"=":key,st1:age,st2:sex") tblproperties("hbase.table.name"="test_db:employee_info");
