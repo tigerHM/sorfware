@@ -1,0 +1,11 @@
+Flume中同时使用Kafka Source和Kafka Sink的Topic覆盖问题
+
+官方文档：
+https://flume.apache.org/releases/content/1.9.0/FlumeUserGuide.html
+
+
+启动一个进程：
+./flume-ng agent --name 配置文件中agent名称 --conf flume部署的conf目录 --conf-file 实例的配置文件路径 
+
+测试发现不能kafka不能同时作为source和sink，kafka.topic这个配置会覆盖掉。
+参考文章：https://blog.csdn.net/run_bigdata/article/details/101048371
