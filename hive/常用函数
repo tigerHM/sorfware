@@ -6,6 +6,26 @@ hive有些函数在生产工作中常用
 
 还有hive的窗口函数对数据进行分析计算
 https://cwiki.apache.org/confluence/display/Hive/LanguageManual+WindowingAndAnalytics
-
-
 参考：https://zhuanlan.zhihu.com/p/70123661
+
+
+1.行转列操作：
+参考：https://zhuanlan.zhihu.com/p/115913870
+explode函数：处理map结构的字段，将数组转换成多行
+
+LATERAL VIEW explode(column1) tmpTable as category_name;
+
+
+2.列转行操作：
+参考：https://zhuanlan.zhihu.com/p/115903252
+拼接：
+concat(column1,column2)
+
+用同样的分隔符拼接：
+concat_ws(',',column1,column2)
+
+对字段进行去重，并对去重字段返回一个数组：
+collect_set(column1)
+
+
+
