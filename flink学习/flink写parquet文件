@@ -1,3 +1,6 @@
 flink写parquet文件：
+
+官网参考文章：
+https://nightlies.apache.org/flink/flink-docs-master/docs/connectors/datastream/file_sink/
 参考文章：
 https://blog.csdn.net/liuxiao723846/article/details/107695737
