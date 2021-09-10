@@ -1,0 +1,16 @@
+Multi-Version Concurrency Control 多版本并发控制
+
+
+首先要了解数据库的事务及事务的隔离级别：
+事务：ACID(原子性，一致性，隔离性，持久性)
+
+命令：
+SELECT @@tx_isolation;(mysql 8.X之前的)
+SELECT @@transaction_isolation;
+
+mysql的默认的事务隔离级别：REPEATABLE-READ
+
+参考文章：
+https://mp.weixin.qq.com/s?__biz=MzI1Mzg4OTMxNQ==&mid=2247484138&idx=1&sn=77f222160f8f26cbb868eb7a4547e7f1&chksm=e9ccdca6debb55b0e7e565aa2b69ca6b05e5f965f84a0317fa6c26191a229c00aa03f1757228&scene=21#wechat_redirect
+参考文章：
+https://cloud.tencent.com/developer/article/1497291
