@@ -67,4 +67,18 @@ SELECT emp_no, salary, from_date, @curRank := @curRank + 1 AS rank FROM salaries
 
 
 
+常见的约束：
+参考文章：
+https://blog.csdn.net/z_johnny/article/details/113820405
+主要归类为列级约束和表级约束：
 
+在 MySQL 中，主要有六种约束：
+列级约束：NOT NULL | DEFAULT | PRIMARY KEY | UNIQUE | CHECK
+表级约束：PRIMARY KEY | UNIQUE | CHECK | FOREIGN KEY
+分析如下：
+1、NOT NULL：非空约束，用于约束该字段的值不能为空。比如姓名、学号等。
+2、DEFAULT：默认值约束，用于约束该字段有默认值，约束当数据表中某个字段不输入值时，自动为其添加一个已经设置好的值。比如性别。
+3、PRIMARY KEY：主键约束，用于约束该字段的值具有唯一性，至多有一个，可以没有，并且非空。比如学号、员工编号等。
+4、UNIQUE：唯一约束，用于约束该字段的值具有唯一性，可以有多个，可以没有，可以为空。比如座位号。
+5、CHECK：检查约束，用来检查数据表中，字段值是否有效。比如年龄、性别。
+6、FOREIGN KEY：外键约束，外键约束经常和主键约束一起使用，用来确保数据的一致性，用于限制两个表的关系，用于保证该字段的值必须来自于主表的关联列的值。在从表添加外键约束，用于引用主表中某列的值。比如学生表的专业编号，员工表的部门编号，员工表的工种编号。
