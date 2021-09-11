@@ -67,6 +67,11 @@ SELECT emp_no, salary, from_date, @curRank := @curRank + 1 AS rank FROM salaries
 
 
 
+
+面试题：
+参考地址：
+https://blog.csdn.net/ThinkWon/article/details/104778621
+
 常见的约束：
 参考文章：
 https://blog.csdn.net/z_johnny/article/details/113820405
