@@ -1,4 +1,4 @@
-1.主从复制,读写分离
+******1.主从复制,读写分离
 文章参考:
 https://zhuanlan.zhihu.com/p/199217698
 主从复制、读写分离就是为了数据库能支持更大的并发。
@@ -22,6 +22,7 @@ select sum(DATA_LENGTH)+sum(INDEX_LENGTH) from information_schema.tables where t
 
 
 
+********
 MVCC(Multi Version Concurrency Control的简称)，代表多版本并发控制。
 参考文章：https://www.jianshu.com/p/f692d4f8a53e
 
@@ -68,11 +69,20 @@ SELECT emp_no, salary, from_date, @curRank := @curRank + 1 AS rank FROM salaries
 
 
 
-面试题：
+******面试题：
 参考地址：
 https://blog.csdn.net/ThinkWon/article/details/104778621
 
-常见的约束：
+******mysql的全文索引
+FullText index
+全文索引,通过建立倒排索引,可以极大的提升检索效率,解决判断字段是否包含的问题.
+例如: 有title字段,需要查询所有包含 "政府"的记录. 需要 like "%政府%"方式查询,查询速度慢,当查询包含"政府" OR "中国"的需要是,sql难以简单满足.全文索引就可以实现这个功能.
+参考文章：
+https://zhuanlan.zhihu.com/p/88275060
+
+
+
+******常见的约束：**
 参考文章：
 https://blog.csdn.net/z_johnny/article/details/113820405
 主要归类为列级约束和表级约束：
