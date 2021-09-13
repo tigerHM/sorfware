@@ -1,0 +1,13 @@
+hive使用多字符作分隔符
+
+问题：
+ Class  org.apache.hadoop.hive.contrib.serde2.MultiDelimitSerDe not found问题
+ 依赖hive-contrib 包
+ 1.hive的启动加载的环境是否有jar包：关键词（java.aux.jars.path）
+ 2.yarn的环境是否有该jar包
+ 
+
+参考文档
+https://blog.csdn.net/u013150378/article/details/90766209
+
+https://cwiki.apache.org/confluence/display/Hive/MultiDelimitSerDe
