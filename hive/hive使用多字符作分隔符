@@ -1,12 +1,24 @@
 hive使用多字符作分隔符
 
-问题：
+hive在建表时，通常使用ROW FORMAT DELIMITED FIELDS TERMINATED BY "|#" 来限定数据中各个字段的分隔符，这种方式只支持单个分隔符.
+
+多字符作分隔符使用这种方式建表
+https://cwiki.apache.org/confluence/display/Hive/MultiDelimitSerDe
+
+CREATE TABLE test (
+ id string,
+ hivearray array<binary>,
+ hivemap map<string,int>) 
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.MultiDelimitSerDe'                  
+WITH SERDEPROPERTIES ("field.delim"="\u0001|","collection.delim"=":","mapkey.delim"="@");
+
+
+具体实施会遇到的问题：
  Class  org.apache.hadoop.hive.contrib.serde2.MultiDelimitSerDe not found问题
  依赖hive-contrib 包
  1.hive的启动加载的环境是否有jar包：关键词（java.aux.jars.path）
  2.yarn的环境是否有该jar包
  
-
 参考文档
 https://blog.csdn.net/u013150378/article/details/90766209
 
