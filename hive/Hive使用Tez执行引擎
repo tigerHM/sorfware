@@ -65,3 +65,9 @@ hive.execution.engine=tez//再次查询已经转换成tez。
     <name>hive.execution.engine</name>
     <value>tez</value>
 </property>
+
+
+
+hive ON tez下INSERT ...UNION...产生子目录问题：
+在insert union操作，查看往上信息，发现tez对于insert union操作会进行优化，通过并行加快速度，为防止有相同文件输出，所以对并行的输出各自生成成了一个子目录，在子目录中存放结果。
+参考：https://blog.csdn.net/myg821561935/article/details/78071014
