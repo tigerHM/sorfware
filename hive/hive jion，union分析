@@ -1,0 +1,36 @@
+多表join 
+
+hive中 join的相关介绍官网链接：
+https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Joins
+
+参考文档：
+https://zhuanlan.zhihu.com/p/46453244
+https://blog.csdn.net/kejiaming/article/details/52084898
+
+INNER JOIN内连接
+Hive SQL值支持等值连接，以及在on子句中只支持and。
+例如：select * from employee e join dept d on e.dept_id = d.dept_id join salary s on e.user_id = s.userid
+
+
+LEFT OUTER JOIN 左外连接
+左外连接，和标准SQL一样，以左边表为基准，如果右边表和on条件匹配的数据则显示出来，否则显示NULL：
+
+
+RIGHT OUTER JOIN 右外连接
+
+FULL OUTER JOIN 全外连接
+
+案例1：
+LEFT SEMI JOIN 左半开连接
+LEFT SEMI JOIN （左半连接）是 IN/EXISTS 子查询的一种更高效的实现。
+参考文章：
+https://blog.csdn.net/happyrocking/article/details/79885071
+
+
+
+
+UNION:
+使用DISTINCT关键字与使用UNION 默认值效果一样，都会删除重复行
+使用ALL关键字，不会删除重复行，结果集包括所有SELECT语句的匹配行（包括重复行）
+参考文章：
+https://blog.csdn.net/liuguangfudan/article/details/78623074
