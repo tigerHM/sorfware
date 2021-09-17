@@ -3,7 +3,10 @@
 https://www.jianshu.com/p/98ea764d9612
 
 使用curl 查询:
-查询集群状态:
+查询集群所有节点信息:
+curl -XGET "ip:port/_cat/nodes?v
+
+查询集群节点状态:
 curl -XGET "ip:port/_cat/health?v
 
 查询所有index:
