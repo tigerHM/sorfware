@@ -34,3 +34,8 @@ hivesql语法总结:
 2.特殊符号最好使用八进制的ASCII码进行转义
 
 3.sql嵌套查询使用别名
+
+
+hive 优化：
+参考文章：
+https://www.cnblogs.com/end/archive/2013/01/15/2861448.html
