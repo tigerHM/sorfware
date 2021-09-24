@@ -353,3 +353,32 @@ public class Heap {
         heap.print();
     }
 }
+
+
+/**
+ * 贪心算法：贪心法顾名思义就是不断贪心的选取当前最优策略的计算方法。
+ *
+ * 问题1：货币选择问题
+ * 描述：分别有1,5,10,50,100元，分别有5,2,2,3,5张纸币。问若要支付k元，则需要多少张纸币？
+ * 分析：优先使用面值大的
+ *
+ */
+public class Tanxin {
+    public static void main(String[] args) {
+
+        int[] MONEY={5,2,2,3,5};
+        int[] VALUE={1,5,10,50,100};
+        Scanner scanner = new Scanner(System.in);
+        int data = scanner.nextInt();
+        int num=0;
+
+        for (int i = MONEY.length-1; i >=0 ; i--) {
+            int c=Math.min(data/VALUE[i],MONEY[i]);
+            data=data-VALUE[i]*c;
+            num+=c;
+        }
+        System.out.println(num);
+    }
+}
+
+
