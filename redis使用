@@ -1,5 +1,9 @@
 redis使用案例
 
+基本5种数据结构：
+String,List,Hash,Set,ZSet
+具体使用方式参考文章：https://zhuanlan.zhihu.com/p/145384563
+
 java的api
 参考文章：https://www.jianshu.com/p/1756acd74e7f
 
