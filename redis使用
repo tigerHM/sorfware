@@ -1,4 +1,7 @@
 redis使用案例
 
+java的api
+参考文章：https://www.jianshu.com/p/1756acd74e7f
+
 分布式锁：
 参考文章：https://www.cnblogs.com/x-kq/p/14801102.html
