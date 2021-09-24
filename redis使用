@@ -1,0 +1,4 @@
+redis使用案例
+
+分布式锁：
+参考文章：https://www.cnblogs.com/x-kq/p/14801102.html
