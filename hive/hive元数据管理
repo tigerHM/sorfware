@@ -1,0 +1,9 @@
+Hive元数据的管理
+hive 元数据一般存在数据库中,常见的一个场景是保存在mysql数据库.
+参考文章：
+https://www.cnblogs.com/qingyunzong/p/8710356.html
+Hive的元数据信息在MySQL数据中有57张表。
+具体表如下
+VERSION：存储版本信息
+DBS：存储Hive中所有数据库的基本信息
+TBLS：存储Hive表、视图、索引表的基本信息
