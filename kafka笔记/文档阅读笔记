@@ -49,3 +49,8 @@ Kafka的副本具有leader副本和follower副本之分，leader副本为客户�
 ISR的概念参考:
 https://cloud.tencent.com/developer/article/1595175
 
+
+
+kafka Raft 模式:
+在新版本kafka不再依赖zk。
+参考文章：https://cloud.tencent.com/developer/article/1840424
