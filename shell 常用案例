@@ -153,3 +153,17 @@ target_hour=`date +'%H' -d "${offset} minutes ago"`
 
 实操案例:定时监控应用脚本
 参考:https://cloud.tencent.com/developer/article/1384250
+
+
+FTP常用命令：
+ftp中用lcd切换本地路径，用cd切换远程服务器的路径。常用到的命令如下：
+cd目录名（进入服务器目录）    lcd目录名（进入本机目录）
+cd \（退到服务器根目录）      lcd \（退到本机根目录）
+cd ..（退回到上一级目录）     lcd ..（退回到上一级目录）
+
+连接ftp服务器：
+ftp -n 服务器ip地址
+user 用户名 密码
+
+shell使用 ftp案例:
+参考：https://www.cnblogs.com/guoch1017/p/9506620.html
