@@ -1,4 +1,9 @@
 hive兼容iceberg
+
+目前Iceberg主要支持HiveCatalog和HadoopCatalog两种Catalog。其中HiveCatalog将当前表metadata文件路径存储在Metastore，这个表metadata文件是所有读写Iceberg表的入口，
+所以每次读写Iceberg表都需要先从Metastore中取出对应的表metadata文件路径，然后再解析这个Metadata文件进行接下来的操作。而HadoopCatalog将当前表metadata文件路径记录在一个文件目录下，
+因此不需要连接Metastore。
+
 官方文档：https://iceberg.apache.org/hive/
 
 下面是文档翻译。
@@ -28,7 +33,8 @@ tableProperties.put(TableProperties.ENGINE_HIVE_ENABLED, "true"); // engine.hive
 catalog.createTable(tableId, schema, spec, tableProperties);
 表级配置覆盖全局 Hadoop 配置。
 
-二、目录管理
+二、目录(命名空间)管理
+catalog可以理解为命名空间。
 1.全局 Hive 目录
 从 Hive 引擎的角度来看，运行时环境中的 Hadoop 配置中只定义了一个全局数据目录。相比之下，Iceberg 支持多种不同的数据目录类型，例如 Hive、Hadoop、AWS Glue 或自定义目录实现。
 Iceberg 还允许根据表在文件系统中的路径直接加载表。
@@ -57,3 +63,6 @@ SET iceberg.catalog.glue.warehouse=s3://my-bucket/my/key/prefix;
 SET iceberg.catalog.glue.lock-impl=org.apache.iceberg.aws.glue.DynamoLockManager;
 SET iceberg.catalog.glue.lock.table=myGlueLockTable;
 
+三、DDL命令
+1.创建外部表
+CREATE EXTERNAL TABLE 命令用于在现有 Iceberg 表的“顶部”覆盖一个 Hive 表。 Iceberg 表是使用 Catalog 或 Tables 接口的实现创建的，需要相应地配置 Hive 以对这些不同类型的表进行操作。
