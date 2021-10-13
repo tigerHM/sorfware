@@ -1,3 +1,59 @@
 hive兼容iceberg
-
 官方文档：https://iceberg.apache.org/hive/
+
+下面是文档翻译。
+Iceberg 支持使用 StorageHandler 通过 Hive 读取和写入 Iceberg 表。
+Iceberg Hive 支持的当前兼容性矩阵：
+
+一、在 Hive 中启用iceberg支持
+1.加载运行时 jar
+要在 Hive 中启用 Iceberg 支持，需要在 Hive 的类路径上提供 HiveIcebergStorageHandler 和支持类。 这些由 iceberg-hive-runtime jar 文件提供。 
+例如，如果使用 Hive shell，则可以通过发出如下语句来实现：add jar /path/to/iceberg-hive-runtime.jar;
+还有许多其他方法可以实现这一点，包括将 jar 文件添加到 Hive 的辅助类路径，以便它在默认情况下可用。 有关更多信息，请参阅 Hive 的文档。
+
+2.启用支持
+如果 Iceberg 存储处理程序不在 Hive 的类路径中，则在设置存储处理程序时，Hive 无法加载或更新 Iceberg 表的元数据。 为了避免在 Hive 中出现损坏的表，除非启用了 Hive 支持，
+否则 Iceberg 不会将存储处理程序添加到表中。 每次更新 Hive 引擎对表的支持时，存储处理程序都会保持同步（添加或删除），即在表属性中打开或关闭。 
+有两种方法可以启用 Hive 支持：在 Hadoop 配置中全局启用和使用表属性按表启用。
+
+3.hadoop 配置
+要为应用程序全局启用 Hive 支持，请在其 Hadoop 配置中设置 iceberg.engine.hive.enabled=true。 例如，在 Spark 加载的 hive-site.xml 中设置此项将为 Spark 创建的所有表启用存储处理程序。
+警告：从 Apache Iceberg 0.11.0 开始，将 Hive 与 Tez 一起使用时，您还必须禁用矢量化（hive.vectorized.execution.enabled=false）。
+
+4.表参数配置
+或者，可以在创建 Iceberg 表时将属性 engine.hive.enabled 设置为 true 并添加到表属性中。 这是以编程方式执行此操作的示例：
+Catalog catalog = ...;
+Map<String, String> tableProperties = Maps.newHashMap();
+tableProperties.put(TableProperties.ENGINE_HIVE_ENABLED, "true"); // engine.hive.enabled=true
+catalog.createTable(tableId, schema, spec, tableProperties);
+表级配置覆盖全局 Hadoop 配置。
+
+二、目录管理
+1.全局 Hive 目录
+从 Hive 引擎的角度来看，运行时环境中的 Hadoop 配置中只定义了一个全局数据目录。相比之下，Iceberg 支持多种不同的数据目录类型，例如 Hive、Hadoop、AWS Glue 或自定义目录实现。
+Iceberg 还允许根据表在文件系统中的路径直接加载表。
+这些表不属于任何目录。用户可能希望通过 Hive 引擎读取这些跨目录和基于路径的表，以用于连接等用例。
+为了支持这一点，Hive Metastore 中的表可以表示三种不同的加载 Iceberg 表的方式，具体取决于表的 iceberg.catalog 属性：
+如果没有设置 iceberg.catalog，该表将使用对应于 Hive 环境中配置的元存储的 HiveCatalog 加载
+如果 iceberg.catalog 设置为目录名称（见下文），该表将使用自定义目录加载
+如果 iceberg.catalog 设置为 location_based_table，则可以使用表的根位置直接加载该表
+对于上面的情况 2 和 3，用户可以在 Hive Metastore 中创建一个 Iceberg 表的叠加层，以便不同的表类型可以在同一个 Hive 环境中协同工作。有关更多详细信息，请参阅创建外部表和创建表。
+2.自定义iceberg目录
+要全局注册不同的目录，请设置以下 Hadoop 配置：
+以下是一些使用 Hive CLI 的示例：
+注册一个名为 another_hive 的 HiveCatalog：
+SET iceberg.catalog.another_hive.type=hive;
+SET iceberg.catalog.another_hive.uri=thrift://example.com:9083;
+SET iceberg.catalog.another_hive.clients=10;
+SET iceberg.catalog.another_hive.warehouse=hdfs://example.com:8020/warehouse;
+
+注册一个名为 hadoop 的 HadoopCatalog：
+SET iceberg.catalog.hadoop.type=hadoop;
+SET iceberg.catalog.hadoop.warehouse=hdfs://example.com:8020/warehouse;
+
+注册一个名为glue 的AWS GlueCatalog：
+SET iceberg.catalog.glue.catalog-impl=org.apache.iceberg.aws.GlueCatalog;
+SET iceberg.catalog.glue.warehouse=s3://my-bucket/my/key/prefix;
+SET iceberg.catalog.glue.lock-impl=org.apache.iceberg.aws.glue.DynamoLockManager;
+SET iceberg.catalog.glue.lock.table=myGlueLockTable;
+
