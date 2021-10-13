@@ -1,0 +1,6 @@
+iceberg体验
+官方文档使用的spark作为引擎作为演示案例。
+地址：https://iceberg.apache.org/getting-started/
+Spark 是目前用于冰山操作的功能最丰富的计算引擎。 我们建议您开始使用 Spark，通过示例了解 Iceberg 的概念和特性。
+您还可以在 Engines 选项卡下查看将 Iceberg 与其他计算引擎一起使用的文档。
+
