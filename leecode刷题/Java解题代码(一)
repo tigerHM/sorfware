@@ -381,4 +381,49 @@ public class Tanxin {
     }
 }
 
+题目：判断一个字符串是不是另一个字符串的子字符串，并返回其位置。
+解答：
+用著名的Knuth-Morris-Pratt（KMP）算法，可以在 O(m + n) 时间利用动态规划完成匹配。
+参考代码：
+ private static int parse(String strA, String strB) {
+        char[] charsstrA = strA.toCharArray();
+        char[] charsstrB = strB.toCharArray();
 
+        int i = 0;
+        int j = 0;
+        int[] next = getNext(strB);
+
+        while (i < charsstrA.length && j < charsstrB.length) {
+            //①如果j=-1，或者当前字符匹配成功（即S[i]==P[j]），都令i++，j++
+            if (j == -1 || charsstrA[i] == charsstrB[j]) { // 当j为-1时，要移动的是i，当然j也要归0
+                i++;
+                j++;
+            } else {
+                //②如果j!=-1，且当前字符匹配失败（即S[i]!=P[j]），则令i不变，j=next[j]，j右移i-next[j]
+                j = next[j];
+            }
+        }
+        return j == charsstrB.length ? i - j : -1;
+    }
+
+    private static int[] getNext(String strB) {
+        char[] p = strB.toCharArray();
+        int[] next = new int[p.length];
+        next[0] = -1;
+        int j = 0;
+        int k = -1;
+        while (j < p.length - 1) {
+            //p[k]表示前缀，p[j]表示后缀
+            if (k == -1 || p[j] == p[k]) {
+                //较之前next数组求法，改动在下面4行
+                if (p[++j] == p[++k]) {
+                    next[j] = next[k];// 当两个字符相等时要跳过
+                } else {
+                    next[j] = k;//之前只有这一行
+                }
+            } else {
+                k = next[k];
+            }
+        }
+        return next;
+    }
