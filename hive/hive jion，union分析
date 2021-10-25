@@ -14,6 +14,13 @@ Hive SQL值支持等值连接，以及在on子句中只支持and。
 
 LEFT OUTER JOIN 左外连接
 左外连接，和标准SQL一样，以左边表为基准，如果右边表和on条件匹配的数据则显示出来，否则显示NULL：
+实例：
+CREATE TABLE tests_1025 (parent STRING, child BIGINT) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001';
+insert into tests_1025 values(null,'1'),(null,'2'),('1','3'),('2','4'),('3','5'),('3','6'),('3','7'),('4','8'),('4','9'),('4','10');
+
+模拟层级关系的数据结构进行关联查询
+select t1.parent as t1_parent,t1.node as t1_node,t2.parent as t2_parent,t2.node as t2_node  from tests_1025 t1 left outer join tests_1025 t2 where t1_parent= ? or t1_node=?;
+实现查询关联关系的上下级组织结构
 
 
 RIGHT OUTER JOIN 右外连接
