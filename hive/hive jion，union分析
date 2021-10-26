@@ -41,3 +41,16 @@ UNION:
 使用ALL关键字，不会删除重复行，结果集包括所有SELECT语句的匹配行（包括重复行）
 参考文章：
 https://blog.csdn.net/liuguangfudan/article/details/78623074
+
+案例：
+有历史数据总量表和增量更新表（分区）两张表，实现拉链表更新：
+历史总量表：
+create table incre_test_full(id INT,name STRING,info STRING,type INT,modify_time STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001';
+增量更新表（分区）:
+create table incre_test_part(id INT,name STRING,info STRING,type INT,modify_time STRING) PARTITIONED BY (dt STRING) ROW FORMAT DELIMITED FIELDS TERMINATED BY '\001';
+
+两张表存在关联字段，查询关联字段在A表中有B表没有的记录：
+select a1.* from incre_test_full a1 where not exists (select a2.id from incre_test_part a2 where a1.id=a2.id and dt="");
+
+历史数据和新增修改数据合并：(注意union all 前后select的schame一致)
+select a1.id as id,a1.name as name,a1.info as info,a1.type as type,a1.modify_time as modify_time from incre_test_full a1 where not exists (select a2.id from incre_test_part a2 where a1.id=a2.id and dt="") union all select id,name,info,type,modify_time from incre_test_part a2  where dt="";
