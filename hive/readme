@@ -6,13 +6,18 @@ hive 相关知识
 关闭hdfs的权限检查 hdfs-site.xml 中的 dfs.permissions.enabled
 
 
-
 报错：FAILED: SemanticException [Error 10096]: Dynamic partition strict mode requires at least one static partition column. To turn this off set hive.exec.dynamic.partition.mode=nonstrict
 
+
+
 启动动态分区功能
+***分区的名称不能是中文，只能是英文！****
 插入语句每一条添加：
 set hive.exec.dynamic.partition=true;
 set hive.exec.dynamic.partition.mode=nostrick;
+
+例如：insert into table table1 partition (dt) select ...,t2.dt from table2 t2;
+参考文章：https://blog.csdn.net/u012061196/article/details/84953363
 
 不断有数据写入的表查询前对数据设置
 Hive会检测如果HDFS目录下存在但表的metastore中不存在的partition元信息，更新到metastore中
