@@ -95,6 +95,7 @@ G1为分配担保预留的空间比例：通过-XX:G1ReservePercent指定，默�
 
 
 ParNew+CMS组合
+参考文章：https://juejin.cn/post/6844903970142421005
 #CMSgc
 # 堆设置
 JAVA_OPTS="-Xms2g -Xmx4g -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m"
