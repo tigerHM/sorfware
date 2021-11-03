@@ -1,0 +1,108 @@
+为java应用编写启动shell脚本
+
+#!/bin/bash
+#配置环境变量
+JAVA_HOME=/usr/local/jdk8
+PATH=$JAVA_HOME/bin:$PATH
+
+#配置java应用名
+appName=xxx
+
+#配置日志输出文件(需要与log4j或者logback中的配置对应)
+
+cd `dirname $0`
+bin_dir=`pwd`
+
+BASE_DIR=$(cd "${bin_dir}" && cd .. && pwd)
+
+STDOUT_FILE=$BASE_DIR/logs/stdout.log
+
+##配置jar包的所在目录及名称(这里的应用采用了spring的assembly的打包方式,需要在pom里或者在assembly.xml的配置中给定打包输出的jar包名称)
+MAIN_JAR=$bin_dir/XXXX.jar
+
+##配置java参数
+
+parameter="-Dloader.path=../lib,../config"
+parameter="$parameter -Dapplication.name=$appName"
+
+
+#-Xmx3550m:设置JVM最大可用内存为3550M.等价于 -XX:MaxHeapSize.
+#-Xms3550m:设置JVM初始内存为3550m.等价于 -XX:initialHeapSize.此值可以设置与-Xmx相同,以避免每次垃圾回收完成后JVM重新分配内存.
+#-Xmn2g:设置年轻代大小为2G.
+
+#-XX:+UseG1GC   使用 G1 (Garbage First) 垃圾收集器,它会从内存中删除垃圾对象  
+#-XX:+UseStringDeduplication  从内存中删除重复的字符串对象
+#-XX:InitiatingHeapOccupancyPercent=n 启动并发GC周期时的堆内存占用百分比. G1之类的垃圾收集器用它来触发并发GC周期,基于整个堆的使用率,而不只是某一代内存的使用比. 值为 0 则表示"一直执行GC循环". 默认值为 45.
+#-XX:+PrintGCDetails         打印GC详细信息
+#-XX:+HeapDumpOnOutOfMemoryError  OOM时导出堆到文件
+
+java_param="-Xmx3550m -Xms3550m -Xmn2g"
+java_param="$java_param -XX:+UseG1GC  -XX:InitiatingHeapOccupancyPercent=45 -XX:MaxTenuringThreshold=15"
+
+java -jar $java_param $parameter $MAIN_JAR > /$STDOUT_FILE 2>&1 &
+
+pid=$!
+sleep 10s
+if ps -p $pid > /dev/null; then
+  echo "$appName is running."
+else 
+  echo "$appName startup failed."
+fi 
+
+G1调优手册
+参考原文链接：https://blog.csdn.net/Axela30W/article/details/106307548
+暂停时间：用-XX:MaxGCPauseMillis来指定，默认值200ms。这是一个软性目标，G1会尽量达成，如果达不成，会逐渐做自我调整。对于Young GC来说，会逐渐减少Eden区个数，减少Eden空间那么Young GC的
+处理时间就会相应减少；对于Mixed GC，G1会调整每次Choose Cset的比例，默认最大值是10%，当然每次选择的Cset少了，所要经历的Mixed GC的次数会相应增加。同时减少Eden的总空间时，就会更加频繁的
+触发Young GC，也就是会加快Mixed GC的执行频率，因为Mixed GC是由Young GC触发的，或者说借机同时执行的。频繁GC会对对应用的吞吐量造成影响，每次Mixed GC回收时间太短，回收的垃圾量太少，可
+能最后GC的垃圾清理速度赶不上应用产生的速度，那么可能会造成串行的Full GC，这是要极力避免的。所以暂停时间肯定不是设置的越小越好，当然也不能设置的偏大，转而指望G1自己会尽快的处理，这样可
+能会导致一次全部并发标记后触发的Mixed GC次数变少，但每次的时间变长，STW时间变长，对应用的影响更加明显。
+Region大小：用-XX:G1HeapRegionSize来指定，若未指定则默认最多生成2048块，每块的大小需要为2的幂次方，如1,2,4,8,16,32，最大值为32M。Region的大小主要是关系到Humongous Object的判定，当一
+个对象超过Region大小的一半时，则为巨型对象，那么其会至少独占一个Region，如果一个放不下，会占用连续的多个Region。当一个Humongous Region放入了一个巨型对象，可能还有不少剩余空间，但是不
+能用于存放其他对象，这些空间就浪费了。所以如果应用里有很多大小差不多的巨型对象，可以适当调整Region的大小，尽量让他们以普通对象的形式分配，合理利用Region空间。
+新生代比例：一般不需要设置新生代大小。让G1自己根据最大停顿时间动态调整。新生代比例有两个数值指定，下限：
+-XX:G1NewSizePercent，默认值5%，上限：-XX:G1MaxNewSizePercent，默认值60%。G1会根据实际的GC情况(主要是暂停时间)来动态的调整新生代的大小，主要是Eden Region的个数。最好是Eden的空间大一
+
+点，毕竟Young GC的频率更大，大的Eden空间能够降低Young GC的发生次数。但是Mixed GC是伴随着Young GC一起的，如果暂停时间短，那么需要更加频繁的Young GC，同时也需要平衡好Mixed GC中新生代
+和老年代的Region，因为新生代的所有Region都会被回收，如果Eden很大，那么留给老年代回收空间就不多了，最后可能会导致Full GC。
+并发GC线程数：通过 -XX:ConcGCThreads来指定，默认是-XX:ParallelGCThreads/4，也就是在非STW期间的GC工作线程数，当然其他的线程很多工作在应用上。当并发周期时间过长时，可以尝试调大GC工作
+线程数，但是这也意味着此期间应用所占的线程数减少，会对吞吐量有一定影响。
+并行GC线程数：通过 -XX:ParallelGCThreads来指定，也就是在STW阶段工作的GC线程数，其值遵循以下原则：
+① 如果用户显示指定了ParallelGCThreads，则使用用户指定的值。
+② 否则，需要根据实际的CPU所能够支持的线程数来计算ParallelGCThreads的值，计算方法见步骤③和步骤④。
+③ 如果物理CPU所能够支持线程数小于8，则ParallelGCThreads的值为CPU所支持的线程数。这里的阀值为8，是因为JVM中调用nof_parallel_worker_threads接口所传入的switch_pt的值均为8。
+④ 如果物理CPU所能够支持线程数大于8，则ParallelGCThreads的值为8加上一个调整值，调整值的计算方式为：物理CPU所支持的线程数减去8所得值的5/8或者5/16，JVM会根据实际的情况来选择具体是乘以
+5/8还是5/16。
+比如，在64线程的x86 CPU上，如果用户未指定ParallelGCThreads的值，则默认的计算方式为：ParallelGCThreads = 8 + (64 - 8) * (5/8) = 8 + 35 = 43。
+被纳入Cset的Region的存活空间占比阈值：通过 -XX:G1MixedGCLiveThresholdPercent指定，不同版本默认值不同，有65%和85%。在全局并发标记阶段，如果一个Region的存活对象的空间占比低于此值，则
+会被纳入Cset。此值直接影响到Mixed GC选择回收的区域，当发现GC时间较长时，可以尝试调低此阈值，尽量优先选择回收垃圾占比高的Region，但此举也可能导致垃圾回收的不够彻底，最终触发Full GC。
+触发全局并发标记的老年代使用占比：通过-XX:InitiatingHeapOccupancyPercent指定，默认值45%，也就是老年代占堆的比例超过45%。如果Mixed GC周期结束后老年代使用率还是超过45%,那么会再次触发
+全局并发标记过程，这样就会导致频繁的老年代GC，影响应用吞吐量。同时老年代空间不大，Mixed GC回收的空间肯定是偏少的。可以适当调高IHOP的值，当然如果此值太高，很容易导致年轻代晋升失败而出
+发Full GC，所以需要多次调整测试。
+触发Mixed GC的堆垃圾占比：通过-XX:G1HeapWastePercent指定，默认值5%，也就是在全局标记结束后能够统计出所有Cset内可被回收的垃圾占整对的比例值，如果超过5%，那么就会触发之后的多轮Mixed GC，
+如果不超过，那么会在之后的某次Young GC中重新执行全局并发标记。可以尝试适当的调高此阈值，能够适当的降低Mixed GC的频率。
+每轮Mixed GC回收的Region最大比例：通过-XX:G1OldCSetRegionThresholdPercent指定，默认10%，也就是每轮Mixed GC附加的Cset的Region不超过全部Region的10%，最多10%，如果暂停时间短，那么可能
+会少于10%。一般这个值不需要额外调整。
+一个周期内触发Mixed GC最大次数：通过-XX:G1MixedGCCountTarget指定，默认值8。也就是在一次全局并发标记后，最多接着8此Mixed GC，也就是会把全局并发标记阶段生成的Cset里的Region拆分为最多
+8部分，然后在每轮Mixed GC里收集一部分。这个值要和上一个参数配合使用，8*10%=80%，应该来说会大于每次标记阶段的Cset集合了。一般此参数也不需额外调整。
+G1为分配担保预留的空间比例：通过-XX:G1ReservePercent指定，默认10%。也就是老年代会预留10%的空间来给新生代的对象晋升，如果经常发生新生代晋升失败而导致Full GC，那么可以适当调高此阈值。
+但是调高此值同时也意味着降低了老年代的实际可用空间。
+谨慎使用Soft Reference：如果SoftReference过多，会有频繁的老年代收集。-XX:SoftRefLRUPolicyMSPerMB参数，可以指定每兆堆空闲空间的软引用的存活时间，默认值是1000，也就是1秒。可以调低这个
+参数来触发更早的回收软引用。如果调高的话会有更多的存活数据，可能在GC后堆占用空间比会增加。 对于软引用，还是建议尽量少用，会增加存活数据量，增加GC的处理时间。
+晋升年龄阈值：通过-XX:MaxTenuringThreshold指定，默认值15。一般新生对象经过15次Young GC会晋升到老年代，巨型对象会直接分配在老年代，同时在Young GC时，如果相同age的对象占Survivors空间
+的比例超过 -XX:TargetSurvivorRatio的值(默认50%)，则会自动将此次晋升年龄阈值设置为此age的值，所有年龄超过此值的对象都会被晋升到老年代，此举可能会导致老年代需要不少空间应对此种晋升。
+一般这个值不需要额外调整。
+
+
+
+ParNew+CMS组合
+#CMSgc
+# 堆设置
+JAVA_OPTS="-Xms2g -Xmx4g -XX:MetaspaceSize=512m -XX:MaxMetaspaceSize=512m"
+# GC 设置
+JAVA_OPTS="$JAVA_OPTS -XX:+UseParNewGC  -XX:MaxTenuringThreshold=9 -XX:+UseConcMarkSweepGC -XX:+UseCMSInitiatingOccupancyOnly -XX:+ScavengeBeforeFullGC
+-XX:+UseCMSCompactAtFullCollection -XX:+CMSParallelRemarkEnabled -XX:CMSFullGCsBeforeCompaction=9 -XX:CMSInitiatingOccupancyFraction=60 -XX:+CMSClassUnloadingEnabled 
+-XX:SoftRefLRUPolicyMSPerMB=0 -XX:+CMSPermGenSweepingEnabled -XX:CMSInitiatingPermOccupancyFraction=70 -XX:+ExplicitGCInvokesConcurrent -XX:+PrintGCDetails 
+-XX:+PrintGCDateStamps -XX:+PrintGCApplicationConcurrentTime -XX:+PrintHeapAtGC -XX:+HeapDumpOnOutOfMemoryError -XX:-OmitStackTraceInFastThrow 
+-Dclient.encoding.override=UTF-8 -Dfile.encoding=UTF-8 "
+
+
