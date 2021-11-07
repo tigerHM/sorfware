@@ -92,6 +92,44 @@ G1为分配担保预留的空间比例：通过-XX:G1ReservePercent指定，默�
 的比例超过 -XX:TargetSurvivorRatio的值(默认50%)，则会自动将此次晋升年龄阈值设置为此age的值，所有年龄超过此值的对象都会被晋升到老年代，此举可能会导致老年代需要不少空间应对此种晋升。
 一般这个值不需要额外调整。
 
+----------******************************--------
+实例：
+使用G1gcshell启动spring boot项目，工程jar包通过assembly打包配置和依赖jar一起打包到lib下。
+#!/bin/bash
+export JAVA_HOME=/usr/jdk64/jdk1.8.0_291-amd64/bin/java
+
+BIN_DIR=$(cd "$(dirname "$0")";pwd)
+cd $BIN_DIR;cd ..
+
+WORKSPACE=`pwd`
+LOGDIR=$WORKSPACE/logs
+
+JAR_NAME="${BIN_DIR}/FlinkSpringBoot-1.0-SNAPSHOT.jar"
+
+MAIN_CLASS=com.test.flinkdemo.FlinkApplication
+
+#add jar to classpath
+CLASSPATH="$CLASSPATH":"${WORKSPACE}/conf"
+
+for file in `ls ${WORKSPACE}/lib/*.jar`;
+do
+   CLASSPATH="$CLASSPATH":"$file"
+done
+
+APP_NAME="FlinkSpringBoot"
+
+export GC_LOGS="-Xloggc:${LOGDIR}/gc/gc-%p.log"
+
+##G1gc
+export GC_OPTS="-XX:+UseG1GC  -XX:InitiatingHeapOccupancyPercent=45 -XX:MaxTenuringThreshold=15  -Xms2g -Xmx4g"
+export JAVA_OPTS="${GC_OPTS} ${GC_LOGS} -Dfile.encoding=utf-8"
+nohup java -cp $JAVA_OPTS -classpath ${CLASSPATH} ${MAIN_CLASS} >logs/uther.out 2>&1 &
+
+P_ID=$!
+sleep 5
+echo "program is running. pid is ${P_ID}"
+
+----------******************************--------
 
 
 ParNew+CMS组合
