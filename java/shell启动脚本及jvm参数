@@ -127,8 +127,11 @@ nohup java -cp $JAVA_OPTS -classpath ${CLASSPATH} ${MAIN_CLASS} >logs/uther.out 
 
 P_ID=$!
 sleep 5
-echo "program is running. pid is ${P_ID}"
-
+if ps -p $pid > /dev/null; then
+  echo "echo "program is running. pid is ${P_ID}""
+else 
+  echo "program startup failed."
+fi 
 ----------******************************--------
 
 
