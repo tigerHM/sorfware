@@ -1,3 +1,8 @@
 Flume
 
 Flume环境部署和配置详解及案例大全：https://www.jb51.net/article/53542.htm
+
+
+特殊问题如：多行日志的读取
+参考文章：
+https://zhuanlan.zhihu.com/p/31638065
