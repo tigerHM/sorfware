@@ -7,3 +7,114 @@ Flume环境部署和配置详解及案例大全：https://www.jb51.net/article/5
 参考文章：
 https://zhuanlan.zhihu.com/p/31638065
 https://www.cnblogs.com/huangxiufen/p/12370044.html
+
+根据前面的文章发现有问题。
+结合配置：
+a1.sources.r1.interceptors= i2
+#匹配时间并转换为时间戳到header中
+a1.sources.r1.interceptors.i2.type=com.xxx.MultInterceptor$Builder
+##正则表达式，按需求定(这里模拟使用'/**log**/'作为一个完整日志结束符号)
+a1.sources.r1.interceptors.i2.regex= /\\*\\*log\\*\\*/
+##开启日志长度截取标志，默认true，开启
+a1.sources.r1.interceptors.i2.cutFlag = true
+##日志长度截取保留最大长度（单位是字节，拦截器代码默认是2Mb）
+a1.sources.r1.interceptors.i2.cutMax = 2048
+a1.sources.r1.interceptors.i2.serializers=se1
+a1.sources.r1.interceptors.i2.serializers.se1.type=org.apache.flume.interceptor.RegexExtractorInterceptorMillisSerializer
+a1.sources.r1.interceptors.i2.serializers.se1.name=timestamp
+a1.sources.r1.interceptors.i2.serializers.se1.pattern=yyyy-MM-dd
+
+自定义拦截器(多行合并)：
+import com.google.common.collect.Lists;
+import org.apache.commons.codec.Charsets;
+import org.apache.flume.Context;
+import org.apache.flume.Event;
+import org.apache.flume.interceptor.Interceptor;
+
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+public class MultInterceptor implements Interceptor {
+
+    // 过滤正则
+    private static Pattern regex = null;
+    // 截取标志
+    private static Boolean cutFlag = true;
+    // 总截取最大长度
+    private static Integer cutMax = null;
+    // 最后一个事件
+    private static Event lastevent = null;
+
+    public void initialize() {
+
+    }
+
+    public Event intercept(Event event) {
+        return event;
+    }
+
+    public List<Event> intercept(List<Event> list) {
+        // 处理结果 event list
+        List<Event> intercepted = Lists.newArrayListWithCapacity(list.size());
+
+        // 遍历匹配正则的情况
+        for (int i = 0; i < list.size(); i++) {
+            Event interceptedEvent = null;
+            Matcher matcher = regex.matcher(new String(list.get(i).getBody(), Charsets.UTF_8));
+            interceptedEvent = intercept((Event) list.get(i));
+            if (matcher.find()) {
+                if (null == lastevent) {
+                    intercepted.add(interceptedEvent);
+                } else {
+                    String body = new String(lastevent.getBody(), Charsets.UTF_8) + "\n" + new String(interceptedEvent.getBody(), Charsets.UTF_8);
+                    int singleBodyLen =body.length();
+                    if (cutFlag) {
+                        // 处理最大截取数边界条件--一定要重新一个变量接收
+                        int lsSingleCut = cutMax > singleBodyLen ? singleBodyLen : cutMax;
+                        // 截取字符串--新变量
+                        String singleCutBody = new String(body.substring(0, lsSingleCut));
+                        interceptedEvent.setBody(singleCutBody.getBytes());
+                        intercepted.add(interceptedEvent);
+                        lastevent = null;
+                    }else {
+                        interceptedEvent.setBody(body.getBytes());
+                        intercepted.add(interceptedEvent);
+                        lastevent = null;
+                    }
+                }
+            } else {
+                if (null == lastevent) {
+                    lastevent = interceptedEvent;
+                } else {
+                    String body = new String(lastevent.getBody(), Charsets.UTF_8) + "\n" + new String(interceptedEvent.getBody(), Charsets.UTF_8);
+                    lastevent.setBody(body.getBytes());
+                }
+            }
+        }
+        return intercepted;
+    }
+
+    public void close() {
+
+    }
+
+    public static class Builder implements Interceptor.Builder {
+
+        @Override
+        public Interceptor build() {
+            return new MultInterceptor();
+        }
+
+        @Override
+        public void configure(Context context) {
+            String regexStr = context.getString("regex", null);
+            cutFlag = context.getBoolean("cutFlag", true);
+            cutMax = context.getInteger("cutMax", 2097152);
+            if (null != regexStr) {
+                // 转换正则
+                regex = Pattern.compile(regexStr);
+            }
+        }
+    }
+}
