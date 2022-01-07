@@ -1,0 +1,143 @@
+spring boot提交作业的方式
+
+首先spring 启动类：
+
+@SpringBootApplication
+public class FlinkApplication {
+    public static void main(String[] args){
+        SpringApplication.run(FlinkApplication.class,args);
+    }
+}
+
+
+
+项目resource下配置hadoop配置文件：
+@Configuration
+public class ApplicationConfig {
+    private final Logger logger =LoggerFactory.getLogger(ApplicationConfig.class);
+
+    @Bean
+    public YarnConfiguration yarnConfiguration(){
+        YarnConfiguration configuration = new YarnConfiguration();
+        try {
+            configuration.addResource(ResourceUtils.getURL("classpath:core-site.xml"));
+            configuration.addResource(ResourceUtils.getURL("classpath:hdfs-site.xml"));
+            configuration.addResource(ResourceUtils.getURL("classpath:yarn-site.xml"));
+        }catch (Exception e){
+            logger.error("load YarnConfiguration error:"+e.getMessage()+"");
+        }
+        return configuration;
+    }
+}
+
+简单的Controller类：
+@RestController
+public class TestController {
+
+    private final Logger logger = LoggerFactory.getLogger(TestController.class);
+    
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello";
+    }
+    @Autowired
+    private YarnConfiguration yarnConfiguration;
+
+    @GetMapping("/startnew")
+    public String startJob() {
+
+        /**flink本地配置
+         * classloader.resolve-order: parent-first
+         *
+         *一些写死的配置可以抽取为配置类，将封装服务下沉为service层，
+         * Controller层只做传参及参数校验
+         */
+
+        String flinkConfDir = "/usr/local/flink-1.12.4/conf";//本地客户端的conf目录
+        String jarFile = "hdfs://linux121:9000/flink/examples/StateTestDemo-1.0-SNAPSHOT-jar-with-dependencies.jar";//提交运行的jar包路径
+        String libPath = "hdfs://linux121:9000/flink/lib";//依赖jar包路径
+        String flinkDistJar = "hdfs://linux121:9000/flink/lib/flink-dist_2.11-1.12.4.jar";//flink-dist_*的路径
+        String mainClass = "com.test";//运行主类名称
+
+        YarnClient yarnClient = YarnClient.createYarnClient();
+        yarnClient.init(yarnConfiguration);
+        yarnClient.start();
+        YarnClientYarnClusterInformationRetriever YCYCIRetriever = YarnClientYarnClusterInformationRetriever.create(yarnClient);
+
+        Configuration flinkConfiguration = GlobalConfiguration.loadConfiguration(flinkConfDir);
+
+        //设置为application模式
+        flinkConfiguration.set(
+                DeploymentOptions.TARGET,
+                YarnDeploymentTarget.APPLICATION.getName());
+        //yarn application name
+        flinkConfiguration.set(YarnConfigOptions.APPLICATION_NAME, "flink-application");
+        flinkConfiguration.set(CheckpointingOptions.INCREMENTAL_CHECKPOINTS, true);
+        flinkConfiguration.set(PipelineOptions.JARS, Collections.singletonList(jarFile));
+
+        Path path = new Path(libPath);
+        flinkConfiguration.set(YarnConfigOptions.PROVIDED_LIB_DIRS, Collections.singletonList(path.toString()));
+
+        flinkConfiguration.set(YarnConfigOptions.FLINK_DIST_JAR, flinkDistJar);
+
+        ClusterSpecification clusterSpecification = new ClusterSpecification.ClusterSpecificationBuilder().createClusterSpecification();
+
+        System.out.println("--------create flinkConfiguration-------");
+
+        YarnClusterDescriptor yarnClusterDescriptor = new YarnClusterDescriptor(flinkConfiguration, yarnConfiguration, yarnClient, YCYCIRetriever, true);
+
+        ClusterClientProvider<ApplicationId> clusterClientProvider = null;
+        try {
+            ApplicationConfiguration applicationConfiguration = new ApplicationConfiguration(new String[] {}, mainClass);
+
+            clusterClientProvider = yarnClusterDescriptor.deployApplicationCluster(
+                    clusterSpecification,
+                    applicationConfiguration);
+            
+            ClusterClient<ApplicationId> clusterClient = clusterClientProvider.getClusterClient();
+
+            ApplicationId applicationId = clusterClient.getClusterId();
+            logger.info("--------applicationId:"+applicationId);
+            String webInterfaceURL = clusterClient.getWebInterfaceURL();
+            logger.info("--------webInterfaceURL:"+webInterfaceURL);
+            return "SUCCESS";
+        } catch (ClusterDeploymentException e){
+            e.printStackTrace();
+            return "FILED";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "FILED";
+        }
+    }
+
+
+    @GetMapping("/stop")
+    public String stopJob()  {
+
+        Configuration flinkConfiguration = new Configuration();
+
+        flinkConfiguration.set(YarnConfigOptions.APPLICATION_ID, "application_1638350764571_0069");//作业实际的APPLICATION_ID
+
+        JobID jobId = JobID.fromHexString("jobid");//作业实际的JobID
+
+        YarnClusterClientFactory clusterClientFactory = new YarnClusterClientFactory();
+        ApplicationId applicationId = clusterClientFactory.getClusterId(flinkConfiguration);
+        YarnClusterDescriptor clusterDescriptor = clusterClientFactory.createClusterDescriptor(flinkConfiguration);
+
+        try {
+      
+            ClusterClient<ApplicationId> clusterClient = clusterDescriptor.retrieve(applicationId).getClusterClient();
+            String savePoint = flinkConfiguration.getString(CheckpointingOptions.SAVEPOINT_DIRECTORY);
+            CompletableFuture<String> completableFuture = clusterClient.stopWithSavepoint(
+                    jobId,
+                    true,
+                    savePoint);
+            String savepointPath = completableFuture.get();
+            logger.info("stop job SUCCESS! savepointPath is:{}",savepointPath);
+            return "SUCCESS";
+        }catch (Exception e){
+            logger.error("stop job error: {}{}",e.getMessage(),"/**log**/");
+            return "FILED";
+        }
+    }
+}
