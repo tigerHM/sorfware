@@ -1,0 +1,25 @@
+hive的数据文件存储格式支持textfile,orc,parquet等文件格式。
+orc具体相关配置：https://cwiki.apache.org/confluence/display/Hive/LanguageManual+ORC
+创建orc表：
+create table incre_test_full(id INT,name STRING,info STRING,type INT,modify_time STRING) stored as orc tblproperties ("orc.compress"="NONE");
+
+create table orctest(id INT,name STRING,info STRING) stored as orc tblproperties ("orc.compress"="SNAPPY");
+
+insert into orctest values (1,'xiaoming','test'),(2,'xiaoli','test2');
+
+hive增加column：
+alter table orctest add columns (type string comment '类型');
+
+insert into orctest values (3,'xiaohong','test3','1'),(4,'xiaowang','test4','1');
+
+
+
+create table orctest2 (id INT,name STRING,info STRING) stored as orc tblproperties ("orc.compress"="SNAPPY");
+insert into orctest2 values (1,'xiaoming','test'),(2,'xiaoli','test2'),(3,'xiaohong','test3');
+
+hive删除column：
+alter table orctest2 set tblproperties ('EXTERNAL'='TRUE');
+drop table orctest2;
+create table orctest2 (id INT,name STRING) stored as orc tblproperties ("orc.compress"="SNAPPY");
+
+从现有表中删除列的唯一方法是使用 REPLACE COLUMNS关键词。但这只能用于具有 native SerDe(DynamicSerDe、MetadataTypedColumnsetSerDe、LazySimpleSerDe 和 ColumnarSerDe)的表。
