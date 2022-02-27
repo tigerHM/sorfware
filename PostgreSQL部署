@@ -1,0 +1,53 @@
+PostgreSQL
+PostgreSQL 是一个免费的对象-关系数据库服务器(ORDBMS)。
+官网：https://www.postgresql.org/
+参考教程：https://www.runoob.com/postgresql/postgresql-tutorial.html
+
+下面以11.15单机部署简单上手学习：
+1.获取安装包
+联网机器：直接 wget https://ftp.postgresql.org/pub/source/v11.15/postgresql-11.15.tar.gz
+离线状态机器：先官网下载，再上传到机器上。
+2.部署依赖包（前置条件）
+在要安装postgresql数据库的Linux服务器上执行以下命令安装所需要的依赖包：
+yum install -y perl-ExtUtils-Embed readline-devel zlib-devel pam-devel libxml2-devel libxslt-devel openldap-devel python-devel gcc-c++ openssl-devel cmake
+3.解压文件
+mkdir /data/postgresql
+将文件解压后:
+tar -zxvf postgresql-11.15.tar.gz 
+进入解压后的目录：
+cd postgresql-11.15
+4.编译源码：
+./configure --prefix=/data/postgresql
+编译过程出现报错可以根据提示进行添加忽略参数进行跳过等操作
+make 
+make install
+5.创建用户，并赋权。
+ # 查看用户是否存在
+id postgresql
+# 添加用户组及用户
+ groupadd postgresql
+ useradd -g postgresql  postgresql
+# 再次查看可以查看对应的uid gid 
+id postgresql
+
+chown -R postgresql:postgresql /data/postgresql
+
+6.切换用户，并初始化数据库
+su - postgresql
+cd /data/postgresql/bin
+initdb
+7.修改配置
+修改/pgsql/postgresql/data目录下的两个文件。
+postgresql.conf   配置PostgreSQL数据库服务器的相应的参数。  
+找到listen_addresses”表示监听的IP地址，默认是在localhost处监听，修改为"*"。
+pg_hba.conf        配置对数据库的访问权限。
+添加：
+#所有ip都可以通过密码连接
+host	all	all	0.0.0.0/0	md5 
+
+8.启动与停止
+pg_ctl -D /data/postgresql -l logfile start
+
+pg_ctl -D /data/postgresql stop
+
+此外，还可以配置环境变量和配置为linux服务启动。
