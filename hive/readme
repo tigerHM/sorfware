@@ -41,6 +41,28 @@ hivesql语法总结:
 3.sql嵌套查询使用别名
 
 
+问题：
+select col_1,col_2 from table_name group by col_1;
+报错：
+Expression not in GROUP BY key ‘col_2′；
+解决方式：
+1、不关心col_2的值，且有多个col_2，那么语句改成
+select col_1, collect_set( col_2 )[0] from table_name group by col_1;
+2、如果每个col_2的值不同且关心col_2的值，那么可以改成
+select col_1,col_2 from table_name group by col_1,col_2;
+原因：在 Group by 子句中，Select 查询的列，要么需要是 Group by 中的列，要么得是用聚合函数（比如 sum、count 等）加工过的列。
+
+group by 和 having
+实例sql：
+select s_id ,avg(s_score) avgscore from score group by s_id having avgscore > 85;
+在第一条语句的执行结果下，再次用having语句来实现二次查询。
+
+having和where的区别：
+1.where针对表中的列发挥作用，查询数据；having针对查询结果中的列发挥作用，筛选数据。
+2.where后面不可以写分组函数，having后则可以写分组函数。
+3.having语句只用于group by分组统计语句。
+
+
 hive 优化：
 参考文章：
 https://www.cnblogs.com/end/archive/2013/01/15/2861448.html
