@@ -1,4 +1,6 @@
 Elasticsearch 分布式部署
+ES架构分析：
+参考文章：https://zhuanlan.zhihu.com/p/334348919
 
 其它准备工作和单机安装大致相同;
 整个集群节点个数N要为奇数个。
