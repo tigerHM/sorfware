@@ -49,6 +49,9 @@ else
   echo "$appName startup failed."
 fi 
 
+JVM参数配置说明：
+参考文章：https://help.aliyun.com/document_detail/148851.html
+
 G1调优手册
 参考原文链接：https://blog.csdn.net/Axela30W/article/details/106307548
 暂停时间：用-XX:MaxGCPauseMillis来指定，默认值200ms。这是一个软性目标，G1会尽量达成，如果达不成，会逐渐做自我调整。对于Young GC来说，会逐渐减少Eden区个数，减少Eden空间那么Young GC的
