@@ -11,3 +11,7 @@ org.elasticsearch.transport.NodeNotConnectedException: [xxxx][xxxx:9300] Node no
 修改elasticsearch.yml:
 discovery.zen.fd.ping_timeout: 100s
 discovery.zen.fd.ping_retries: 5
+
+
+集群优化思路：
+参考文章：https://cloud.tencent.com/developer/article/1696747
