@@ -17,4 +17,6 @@ discovery.zen.fd.ping_retries: 5
 参考文章：https://cloud.tencent.com/developer/article/1696747
 
 预处理pipeline的使用：
-参考文章：https://zhuanlan.zhihu.com/p/77413046
+参考文章：
+https://zhuanlan.zhihu.com/p/341984620
+https://zhuanlan.zhihu.com/p/77413046
