@@ -1,0 +1,11 @@
+Kubernetes
+Kubernetes 也称为 K8s，是用于自动部署、扩缩和管理容器化应用程序的开源系统。
+
+Docker 技术使用 Linux 内核和内核功能（例如 Cgroup 和命名空间）来分隔进程，以便各进程相互独立运行。这种独立性正是采用容器的目的所在；它可以独立运行多种进程、多个应用，
+更加充分地发挥基础设施的作用，同时保持各个独立系统的安全性。
+容器工具（包括 Docker）可提供基于镜像的部署模式。这使得它能够轻松跨多种环境，与其依赖程序共享应用或服务组。
+Docker 还可在这一容器环境中自动部署应用（或者合并多种流程，以构建单个应用）。
+
+参考文章：
+https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics
+http://docs.kubernetes.org.cn/574.html
