@@ -9,3 +9,16 @@ Docker 还可在这一容器环境中自动部署应用（或者合并多种流�
 参考文章：
 https://kubernetes.io/zh-cn/docs/tutorials/kubernetes-basics
 http://docs.kubernetes.org.cn/574.html
+
+
+容器镜像管理
+Harbor 是 VMware 公司开源的企业级 Docker Registry 项目，其目标是帮助用户迅速搭建一个企业级的 Docker Registry 服务。
+参考文章：
+https://developer.aliyun.com/article/898329
+
+
+
+Ceph是一个统一的分布式存储系统，设计初衷是提供较好的性能、可靠性和可扩展性。
+Ceph在k8s中用做共享存储还是非常方便的。
+https://juejin.cn/post/7185832913009639485
+https://developer.aliyun.com/article/873291
