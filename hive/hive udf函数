@@ -39,3 +39,13 @@ CREATE FUNCTION 方法名 AS  类名  USING JAR 'hdfs包路径'
 
 
 示例:计算两个日期的时间差
+
+
+
+
+
+hive动态生成连续范围的日期值：
+例如：产生连续一周的日期
+select pos,date_add(start_date,pos) date_day from 
+(select '2022-12-12' as start_date,'2022-12-18' as stop_date) tmp 
+lateral view posexplode (split(space(datediff(stop_date,start_date)),"")) t as pos,value;
