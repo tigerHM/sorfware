@@ -4,7 +4,7 @@ Ansible适用于管理所有类型的环境，从随手可安装的实例，到�
 参考文章：
 http://www.ansible.com.cn/index.html
 https://zhuanlan.zhihu.com/p/344161477
-
+https://blog.csdn.net/m0_55005311/article/details/119839885
 
 centOS7部署：
 yum install -y epel-release 
