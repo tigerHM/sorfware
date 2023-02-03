@@ -12,3 +12,11 @@ yum install -y ansible
 
 使用实例参考：
 https://blog.csdn.net/sunspeedzy/article/details/106983361
+
+
+
+ansible实现管理的方式
+1、Ad-Hoc
+利用ansible命令直接完成管理,主要用于临时命令使用场景
+2、playbook
+ansible脚本,主要用于大型项目场景,需要前期的规划
