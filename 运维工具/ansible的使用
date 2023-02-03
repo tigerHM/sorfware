@@ -9,3 +9,6 @@ https://zhuanlan.zhihu.com/p/344161477
 centOS7部署：
 yum install -y epel-release 
 yum install -y ansible 
+
+使用实例参考：
+https://blog.csdn.net/sunspeedzy/article/details/106983361
