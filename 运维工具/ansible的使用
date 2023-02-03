@@ -1,0 +1,11 @@
+Ansible是一个IT自动化工具。它可以配置系统，开发软件，或者编排高级的IT任务，例如持续开发或者零宕机滚动更新。
+Ansible适用于管理所有类型的环境，从随手可安装的实例，到企业级别的成千上万个实例都可行。
+
+参考文章：
+http://www.ansible.com.cn/index.html
+https://zhuanlan.zhihu.com/p/344161477
+
+
+centOS7部署：
+yum install -y epel-release 
+yum install -y ansible 
