@@ -20,3 +20,33 @@ ansible实现管理的方式
 利用ansible命令直接完成管理,主要用于临时命令使用场景
 2、playbook
 ansible脚本,主要用于大型项目场景,需要前期的规划
+
+
+Ansible 可同时操作属于一个组的多台主机,组和主机之间的关系通过 inventory 文件配置. 默认的文件路径为 /etc/ansible/hosts
+案例：集群所有机器添加一个用户和用户组，并设定密码。
+task.yml:
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Step 1 - Check xxx user
+      shell: id xxx
+      ignore_errors: true
+      register: result
+
+    - name: Step 2 - Add xxx group
+      group: name=xxx system=yes state=present
+      when: result.rc == 1
+
+    - name: Step 3 - Add xxx user
+      user: name=xxx system=yes group=xxx state=present
+      when: result.rc == 1
+
+    - name: Step 4 - Set xxx password
+      shell: echo 'passwd'| passwd --stdin xxx
+      when: result.rc == 1
+    
+    - name: Step 5 - Create ansible_tmp directory
+      file: path=/tmp/ansible_tmp state=directory mode=0777
+
+执行：ansible-playbook -i hosts文件配置路径(默认就是/etc/ansible/hosts) task.yml
