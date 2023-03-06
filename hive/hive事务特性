@@ -1,0 +1,13 @@
+hive 事务：
+
+遇到的一个spark-sql报错：
+org.apache.hadoop.hive.ql.metadata.HiveException: Unable to fetch table xxxx.  Your client does not appear to support insert-only tables.  
+To skip capability checks, please set metastore.client.capability.check to false.  This setting can be set globally, or on the client for 
+the current metastore session.  Note that this may lead to incorrect results, data loss, undefined behavior, etc. if your client is actually 
+incompatible.  You can also specify custom client capabilities via get_table_req API.
+
+直到 Hive 0.13，在分区级别提供了原子性，一致性和持久性。可以通过打开一种可用的锁定机制(ZooKeeper或在内存中)来提供隔离。通过在Hive 0.13中添加事务，
+现在可以在行级别提供完整的 ACID 语义，因此一个应用程序可以添加行，而另一个应用程序可以从同一分区读取数据而不会互相干扰。
+Hive 3.0之后默认开启ACID功能，默认建表都是使用ACID的事务表。
+
+参考文章：https://blog.csdn.net/m0_46168848/article/details/127607522
