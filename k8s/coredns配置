@@ -1,0 +1,4 @@
+CoreDNS是Kubernetes的核心插件之一，用于正向查找（A 和 AAAA 记录）、端口发现（SRV 记录）、反向 IP 地址发现（PTR 记录）等功能。
+官方文档：
+https://kubernetes.io/zh-cn/docs/concepts/services-networking/dns-pod-service/#dns-records
+
