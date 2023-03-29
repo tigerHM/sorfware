@@ -6,3 +6,6 @@ Kerberos是一种认证机制。目的是，通过密钥系统为客户端/服�
 参考文章：https://www.cnblogs.com/swordfall/p/12009716.html
 https://www2.jianshu.com/p/d7279d399b76
 https://blog.csdn.net/jewes/article/details/20792021
+
+kerberos 与openldap整合
+参考文章：https://www.infoq.cn/article/s1ngm7eubqer9bw8xhk4
