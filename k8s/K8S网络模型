@@ -1,0 +1,6 @@
+K8S网络模型
+
+网络也是 Kubernetes 中比较复杂的一部分。
+Kubernetes 的网络模型在设计的时候就遵循了一个基本原则，即每一个 Pod 都拥有一个自己的独立的 IP 地址，且这些 Pod 之间可以不通过任何 NAT 互相连通。
+参考文章：
+https://zhuanlan.zhihu.com/p/400342180
