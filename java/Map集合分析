@@ -4,3 +4,6 @@
 
 2.ConcurrentHashMap底层实现原理
 参考文章：https://www.jianshu.com/p/865c813f2726
+
+3.如何构造value的类型不同的map
+参考：https://zditect.com/main-advanced/java/java-hashmap-different-value-types.html
