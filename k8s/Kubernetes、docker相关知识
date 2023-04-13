@@ -27,3 +27,7 @@ https://developer.aliyun.com/article/873291
 Docker 常用命令：
 进入容器
 docker exec -it 容器进程id /bin/bash
+
+
+k8s部署mysql：
+https://cloud.tencent.com/developer/article/1783227
