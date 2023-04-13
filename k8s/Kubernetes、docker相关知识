@@ -23,3 +23,7 @@ Ceph在k8s中用做共享存储还是非常方便的。
 https://juejin.cn/post/7185832913009639485
 https://developer.aliyun.com/article/873291
   
+
+Docker 常用命令：
+进入容器
+docker exec -it 容器进程id /bin/bash
