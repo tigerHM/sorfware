@@ -1,0 +1,14 @@
+expect应用
+
+定时备份pg数据库脚本：
+#!/bin/bash
+echo "backup database running!"
+
+expect  <<EOF
+set timeout 300
+spawn pg_dump -h xxx -p xxx -U xxx -c -f db_xxx.sql 库名xxx
+expect { 
+    "Password:" { send "密码\n" }
+}
+expect eof
+EOF
