@@ -3,19 +3,24 @@ Kubernetes 也称为 K8s，是用于自动部署、扩缩和管理容器化应�
 
 Kubernetes 的一些概念
 Pod
-Pod 是 K8s 里最小的调度单元。K8s 都是以 Pod 进行调度的。每个 Pod 可以包含一个或者多个 Container。每个 Container 都会有自己的资源，相互之间资源也是已经隔离的，但是所有 Container 共享同一个网络，这就意味着所有的 Container 可以通过 localhost 直接进行通信。
-同时，Container 之间可以通过 Volume 共享一些文件。比如 JobManager 或 TaskManager 的 Pod 里产生了一些日志，在同一个 Pod 里再去起另外一个进程收集不符合 K8s 的原生语义。可以通过 SideCar 的方式去起另外一个 Container，把 JobManager 产生的日志收走。这就是一个 Pod 多个 Container 的具体用途。
+Pod 是 K8s 里最小的调度单元。K8s 都是以 Pod 进行调度的。每个 Pod 可以包含一个或者多个 Container。每个 Container 都会有自己的资源，相互之间资源也是已经隔离的，
+但是所有 Container 共享同一个网络，这就意味着所有的 Container 可以通过 localhost 直接进行通信。
+同时，Container 之间可以通过 Volume 共享一些文件。比如 JobManager 或 TaskManager 的 Pod 里产生了一些日志，在同一个 Pod 里再去起另外一个进程收集不符合 K8s 的原生语义。
+可以通过 SideCar 的方式去起另外一个 Container，把 JobManager 产生的日志收走。这就是一个 Pod 多个 Container 的具体用途。
 
 ConfigMap  (简称 cm)
-ConfigMap 是一个 K-V 数据结构。通常的用法是将 ConfigMap 挂载到 Pod ，作为配置文件提供 Pod 里新的进程使用。在 Flink 中可以将 Log4j 文件或者是 flink-conf 文件写到 ConfigMap 里面，在 JobManager 或者 TaskManger 起来之前将它挂载到 Pod 里，然后 JobManager 去读取相应的 conf 文件，加载其配置，进而再正确地拉起 JobManager 一些相应的组件。
+ConfigMap 是一个 K-V 数据结构。通常的用法是将 ConfigMap 挂载到 Pod ，作为配置文件提供 Pod 里新的进程使用。在 Flink 中可以将 Log4j 文件或者是 flink-conf 文件写到
+ConfigMap 里面，在 JobManager 或者 TaskManger 起来之前将它挂载到 Pod 里，然后 JobManager 去读取相应的 conf 文件，加载其配置，进而再正确地拉起 JobManager 一些相应的组件。
 
 Service（简称 SVC ）
 一种对外暴露服务的方式。如果现在内部有一个服务，需要在 K8s 外部进行访问，此时可以通过 Service，然后用 LoadBalancer 或者 NodePort 的方式将其暴露出去。
-如果有一个 Service，不希望或不需要将其对外暴露，可以把它设置为 Cluster IP 或者是 None 这种 Headless 的模式。这个时候，它可以用于服务之间相互连接，例如传统的前端去联后端服务，或者是在 Flink 中非 HA 的情况下，TaskManager 去连 JobManager 等等。
+如果有一个 Service，不希望或不需要将其对外暴露，可以把它设置为 Cluster IP 或者是 None 这种 Headless 的模式。这个时候，它可以用于服务之间相互连接，例如传统的前端去联
+后端服务，或者是在 Flink 中非 HA 的情况下，TaskManager 去连 JobManager 等等。
 
 Deployment
-因为 Pod 是可以随时被终止的，所以当 Pod 终止之后，就无法再拉起来去做 failover 等其他相关操作。Deployment 是在 Pod 之上提供了更高一层的抽象。Deployment 可以设置 Pod 的状态，比如需要起 5 个 TaskManager，Deployment 会维持当前状态。当有 TaskManager 挂了以后，它会起新的 TaskManager，来补上。这样可以避免自己汇报 Pod 的状态，可以去做一些更复杂的管理 failover 等等。这也是最基础的概念——运维自动化。
-
+因为 Pod 是可以随时被终止的，所以当 Pod 终止之后，就无法再拉起来去做 failover 等其他相关操作。Deployment 是在 Pod 之上提供了更高一层的抽象。Deployment 可以设置 Pod 
+的状态，比如需要起 5 个 TaskManager，Deployment 会维持当前状态。当有 TaskManager 挂了以后，它会起新的 TaskManager，来补上。这样可以避免自己汇报 Pod 的状态，可以去
+做一些更复杂的管理 failover 等等。这也是最基础的概念——运维自动化。
 
 
 Docker 技术使用 Linux 内核和内核功能（例如 Cgroup 和命名空间）来分隔进程，以便各进程相互独立运行。这种独立性正是采用容器的目的所在；它可以独立运行多种进程、多个应用，
