@@ -1,0 +1,5 @@
+iptables 是 Linux 防火墙系统的重要组成部分，iptables 的主要功能是实现对网络数据包进出设备及转发的控制。
+当数据包需要进入设备、从设备中流出或者由该设备转发、路由时，都可以使用 iptables 进行控制。
+
+参考文章
+https://blog.csdn.net/daocaokafei/article/details/115091313
