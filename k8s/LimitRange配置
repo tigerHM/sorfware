@@ -1,0 +1,4 @@
+在默认情况下，K8S不会对Pod进行CPU和内存限制，这就意味着这个未被限制的Pod可以随心所欲的使用节点上的CPU和内存。
+为namespace配置LimitRange,可以对资源配置进行限额。
+参考文章：
+https://zhuanlan.zhihu.com/p/117574243
