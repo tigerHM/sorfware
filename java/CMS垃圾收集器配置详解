@@ -1,0 +1,63 @@
+gc参数：
+-XX:CMSInitiatingOccupancyFraction=70 -XX:ErrorFile=/var/log/hadoop/hdfs/hs_err_pid%p.log -XX:InitialHeapSize=2147483648 -XX:MaxHeapSize=2147483648 \
+-XX:MaxNewSize=134217728 -XX:MaxTenuringThreshold=6 -XX:NewSize=134217728 -XX:OldPLABSize=16 -XX:OnOutOfMemoryError="/usr/hdp/current/hadoop-hdfs-namenode/bin/kill-name-node" \
+-XX:ParallelGCThreads=8 -XX:+PrintGC -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCTimeStamps -XX:+UseCMSInitiatingOccupancyOnly \
+-XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseConcMarkSweepGC -XX:+UseParNewGC 
+
+说明:
+-XX:CMSInitiatingOccupancyFraction=70    
+这个参数指定了CMS GC在堆内存使用达到70%时启动垃圾收集。
+
+-XX:ErrorFile=/var/log/hadoop/hdfs/hs_err_pid%p.log
+指定了JVM错误日志文件的路径和格式。当JVM遇到致命错误时，会将错误信息写入该文件。 %p是一个占位符，表示当前进程的ID。
+
+-XX:InitialHeapSize=2147483648
+这个参数指定了JVM的初始堆大小，即在JVM启动时分配给堆的内存量。在这个例子中，初始堆大小为2GB。
+
+-XX:MaxHeapSize=2147483648
+这个参数指定了JVM的最大堆大小，即JVM可以分配给堆的最大内存量。在这个例子中，最大堆大小为2GB。
+
+-XX:MaxNewSize=134217728
+这个参数指定了新生代的最大内存大小。在这个例子中，新生代的最大内存大小为128MB。
+
+-XX:MaxTenuringThreshold=6
+这个参数指定了对象在新生代中存活的最大年龄。在这个例子中，对象在新生代中存活的最大年龄为6岁。
+
+-XX:NewSize=134217728
+这个参数指定了新生代的初始内存大小。在这个例子中，新生代的初始内存大小为128MB。
+
+-XX:OldPLABSize=16
+这个参数指定了CMS垃圾收集器中老年代的PLAB（Partial List of Blocks）大小。这个参数只对CMS垃圾收集器有效。
+
+-XX:OnOutOfMemoryError="/usr/hdp/current/hadoop-hdfs-namenode/bin/kill-name-node"
+这个参数指定了当JVM遇到OutOfMemoryError错误时要执行的命令。在这个例子中，当JVM遇到OutOfMemoryError错误时，会执行/usr/hdp/current/hadoop-hdfs-namenode/bin/kill-name-node命令。
+
+-XX:ParallelGCThreads=8
+这个参数指定了并行GC的线程数。
+
+-XX:PrintGC
+这个参数指示JVM在每次垃圾收集时打印GC信息。
+
+-XX:PrintGCDateStamps
+这个参数指示JVM在每次垃圾收集时打印日期时间戳。
+
+-XX:PrintGCDetails
+这个参数指示JVM在每次垃圾收集时打印详细的GC信息。
+
+-XX:PrintGCTimeStamps
+这个参数指示JVM在每次垃圾收集时打印时间戳。
+
+-XX:UseCMSInitiatingOccupancyOnly
+这个参数指示CMS垃圾收集器仅使用CMSInitiatingOccupancyFraction参数指定的阈值来启动垃圾收集。这个参数只对CMS垃圾收集器有效。
+
+-XX:UseCompressedClassPointers
+这个参数指示JVM使用压缩的类指针来减少内存使用。
+
+-XX:UseCompressedOops
+这个参数指示JVM使用压缩的指针来减少内存使用。
+
+-XX:UseConcMarkSweepGC
+这个参数指示JVM使用CMS垃圾收集器来收集老年代的垃圾。这个参数只对CMS垃圾收集器有效。
+
+-XX:UseParNewGC
+这个参数指示JVM使用并行新生代垃圾收集器来收集新生代的垃圾。
