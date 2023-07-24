@@ -1,0 +1,173 @@
+ranger2.1.0 适配 hadoop3.2.2问题汇总：
+环境：zookeeper3.7.0,hadoop3.2.2(apache,开启kerberos验证）、hive3.1.0（apache,开启kerberos验证）、ranger2.1.0(同步unix用户)
+ranger部署安装：
+ranger-2.1.0-admin、ranger-2.1.0-usersync、
+ranger-2.1.0-hdfs-plugin（需要安装在namenode）、
+ranger-2.1.0-hdfs-plugin(需要安装同hive节点)
+
+问题：
+1.修改完ranger配置的install.properties还是得检查：ranger-admin-site.xml、ranger-ugsync-site.xml。如ranger-ugsync-site.xml存在bug：
+<property>
+    <name>ranger.usersync.enabled</name>
+    <value>false</value>
+  </property>
+初始化后产生的配置是错误的。
+
+2.报错内容：
+WARN org.apache.ranger.admin.client.RangerAdminRESTClient: Error getting policies. secureMode=true, user=nn/hadoop-01@xxxxxx.COM (auth:KERBEROS), response={"httpStatusCode":401,"statusCode":0}, serviceName=
+解决方案：
+401,404返回都是没有找到对应的用户,角色导致的。同时需要设置参数policy.download.auth.users允许下载策略的用户。
+在ranger-admin的ews/logs日志中可以找到实际请求的用户，比如hadoop。在设置页面将请求的用户添加到ranger管理中。
+在ranger角色管理页面中配置用户auditor、hadoop, Role选择Admin,并设置密码ranger123。
+在连接配置中加入policy.download.auth.users:auditor,hadoop
+
+通过命令获取policies：
+curl -Lku auditor:ranger123 -H "Accept: application/json" -H "Content-type:application/json" "http://xxxx:6080/service/plugins/secure/policies/download/xxxx"  > /etc/ranger/xxxx/policycache/hdfs_xxxxx.json
+
+
+3.报错内容：
+ERROR org.apache.ranger.plugin.util.PolicyRefresher: failed to load policies from cache file /etc/ranger/xxxx/policycache/hdfs_xxxx.json
+com.google.gson.JsonSyntaxException: 1688600585740
+Caused by: java.text.ParseException: Unparseable date: "1688600585740"
+
+解决方案：
+修改org.apache.ranger.plugin.util.PolicyRefresher的gson初始化代码
+代码修改：
+      //修复gson解析Date异常bug
+      gson = new GsonBuilder().registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+        public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+          return new Date(json.getAsJsonPrimitive().getAsLong());
+        }
+      }).setDateFormat("yyyyMMdd-HH:mm:ss.SSS-Z").setPrettyPrinting().create();
+
+4.报错内容：
+2023-07-12T10:58:50,506  INFO [main] service.AbstractService: Service:HiveServer2 is started.
+2023-07-12T10:58:50,507  INFO [main] imps.CuratorFrameworkImpl: Starting
+2023-07-12T10:58:50,507 DEBUG [main] curator.CuratorZookeeperClient: Starting
+2023-07-12T10:58:50,507 DEBUG [main] curator.ConnectionState: Starting
+2023-07-12T10:58:50,507 DEBUG [main] curator.ConnectionState: reset
+2023-07-12T10:58:50,507  INFO [main] zookeeper.ZooKeeper: Initiating client connection, connectString=:2181 sessionTimeout=1200000 watcher=org.apache.curator.ConnectionState@55746340
+2023-07-12T10:58:50,508  INFO [Thread[Thread-75,5,main]] delegation.AbstractDelegationTokenSecretManager: Updating the current master key for generating delegation tokens
+2023-07-12T10:58:50,508  INFO [main-SendThread(localhost:2181)] zookeeper.ClientCnxn: Opening socket connection to server localhost/127.0.0.1:2181
+2023-07-12T10:58:50,508  INFO [main-SendThread(localhost:2181)] zookeeper.ClientCnxn: Socket connection established to localhost/127.0.0.1:2181, initiating session
+2023-07-12T10:58:50,508 DEBUG [main-SendThread(localhost:2181)] zookeeper.ClientCnxn: Session establishment request sent on localhost/127.0.0.1:2181
+2023-07-12T10:58:50,508  INFO [Thread[Thread-75,5,main]] security.TokenStoreDelegationTokenSecretManager: New master key with key id=1
+2023-07-12T10:58:50,511 DEBUG [pool-78-thread-1] ipc.ProtobufRpcEngine: Call: getFileInfo took 8ms
+2023-07-12T10:58:50,512 DEBUG [pool-78-thread-1] fs.FileSystem: Looking for FS supporting file
+2023-07-12T10:58:50,512 DEBUG [pool-78-thread-1] fs.FileSystem: looking for configuration option fs.file.impl
+2023-07-12T10:58:50,512 DEBUG [pool-78-thread-1] fs.FileSystem: Looking in service filesystems for implementation class
+2023-07-12T10:58:50,512 DEBUG [pool-78-thread-1] fs.FileSystem: FS for file is class org.apache.hadoop.hive.ql.io.ProxyLocalFileSystem
+2023-07-12T10:58:50,512  INFO [pool-78-thread-1] session.SessionState: Created local directory: /tmp/root/05a336af-6abe-4c9a-9f44-c884b6f0fa5b
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] fs.FileSystem: Looking for FS supporting hdfs
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] fs.FileSystem: looking for configuration option fs.hdfs.impl
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] fs.FileSystem: Looking in service filesystems for implementation class
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] fs.FileSystem: FS for hdfs is class org.apache.hadoop.hdfs.DistributedFileSystem
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.use.legacy.blockreader.local = false
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.read.shortcircuit = false
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.domain.socket.data.traffic = false
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.domain.socket.path = 
+2023-07-12T10:58:50,513 DEBUG [pool-78-thread-1] hdfs.DFSClient: Sets dfs.client.block.write.replace-datanode-on-failure.min-replication to 0
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] hdfs.HAUtilClient: No HA service delegation token found for logical URI hdfs://xxxx-hdfs
+2023-07-12T10:58:50,514  INFO [main-SendThread(localhost:2181)] zookeeper.ClientCnxn: Session establishment complete on server localhost/127.0.0.1:2181, sessionid = 0x20006fef00b003c, negotiated timeout = 40000
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.use.legacy.blockreader.local = false
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.read.shortcircuit = false
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.client.domain.socket.data.traffic = false
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] impl.DfsClientConf: dfs.domain.socket.path = 
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] retry.RetryUtils: multipleLinearRandomRetry = null
+2023-07-12T10:58:50,514  INFO [main-EventThread] state.ConnectionStateManager: State change: CONNECTED
+2023-07-12T10:58:50,514 DEBUG [pool-78-thread-1] ipc.Client: getting client out of cache: Client-a15b033a4c524c468c34452bedc54563
+2023-07-12T10:58:50,515 DEBUG [pool-78-thread-1] sasl.DataTransferSaslUtil: DataTransferProtocol using SaslPropertiesResolver, configured QOP dfs.data.transfer.protection = authentication, configured class dfs.data.transfer.saslproperties.resolver.class = class org.apache.hadoop.security.SaslPropertiesResolver
+2023-07-12T10:58:50,515 DEBUG [pool-78-thread-1] ipc.Client: The ping interval is 60000 ms.
+2023-07-12T10:58:50,516 DEBUG [pool-78-thread-1] ipc.Client: Connecting to hadoop-01/xxxx:8020
+2023-07-12T10:58:50,516 DEBUG [pool-78-thread-1] ipc.Client: Binding hive/hadoop-02@xxxxx.COM to hadoop-02/xxxx
+2023-07-12T10:58:50,516 DEBUG [pool-78-thread-1] security.UserGroupInformation: PrivilegedAction as:hive/hadoop-02@xxxxx.COM (auth:KERBEROS) from:org.apache.hadoop.ipc.Client$Connection.setupIOstreams(Client.java:818)
+2023-07-12T10:58:50,516 DEBUG [pool-78-thread-1] security.SaslRpcClient: Sending sasl message state: NEGOTIATE
+
+2023-07-12T10:58:50,517 ERROR [main] server.HiveServer2: Unable to create HiveServer2 namespace: hiveserver2 on ZooKeeper
+org.apache.zookeeper.KeeperException$InvalidACLException: KeeperErrorCode = InvalidACL for /hiveserver2
+  at org.apache.zookeeper.KeeperException.create(KeeperException.java:121) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.zookeeper.KeeperException.create(KeeperException.java:51) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.zookeeper.ZooKeeper.create(ZooKeeper.java:783) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.curator.framework.imps.CreateBuilderImpl$11.call(CreateBuilderImpl.java:740) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl$11.call(CreateBuilderImpl.java:723) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.RetryLoop.callWithRetry(RetryLoop.java:109) ~[curator-client-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.pathInForeground(CreateBuilderImpl.java:720) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.protectedPathInForeground(CreateBuilderImpl.java:484) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:474) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:454) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:44) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.hive.service.server.HiveServer2.startZookeeperClient(HiveServer2.java:490) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.startPrivilegeSynchonizer(HiveServer2.java:1002) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.start(HiveServer2.java:726) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.startHiveServer2(HiveServer2.java:1037) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.access$1600(HiveServer2.java:140) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2$StartOptionExecutor.execute(HiveServer2.java:1305) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.main(HiveServer2.java:1149) [hive-service-3.1.0.jar:3.1.0]
+  at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_321]
+  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_321]
+  at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_321]
+  at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_321]
+  at org.apache.hadoop.util.RunJar.run(RunJar.java:323) [hadoop-common-3.2.2.jar:?]
+  at org.apache.hadoop.util.RunJar.main(RunJar.java:236) [hadoop-common-3.2.2.jar:?]
+2023-07-12T10:58:50,517 ERROR [main] server.HiveServer2: Error starting priviledge synchonizer: 
+org.apache.zookeeper.KeeperException$InvalidACLException: KeeperErrorCode = InvalidACL for /hiveserver2
+  at org.apache.zookeeper.KeeperException.create(KeeperException.java:121) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.zookeeper.KeeperException.create(KeeperException.java:51) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.zookeeper.ZooKeeper.create(ZooKeeper.java:783) ~[zookeeper-3.4.6.jar:3.4.6-1569965]
+  at org.apache.curator.framework.imps.CreateBuilderImpl$11.call(CreateBuilderImpl.java:740) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl$11.call(CreateBuilderImpl.java:723) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.RetryLoop.callWithRetry(RetryLoop.java:109) ~[curator-client-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.pathInForeground(CreateBuilderImpl.java:720) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.protectedPathInForeground(CreateBuilderImpl.java:484) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:474) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:454) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.curator.framework.imps.CreateBuilderImpl.forPath(CreateBuilderImpl.java:44) ~[curator-framework-2.12.0.jar:?]
+  at org.apache.hive.service.server.HiveServer2.startZookeeperClient(HiveServer2.java:490) ~[hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.startPrivilegeSynchonizer(HiveServer2.java:1002) ~[hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.start(HiveServer2.java:726) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.startHiveServer2(HiveServer2.java:1037) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.access$1600(HiveServer2.java:140) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2$StartOptionExecutor.execute(HiveServer2.java:1305) [hive-service-3.1.0.jar:3.1.0]
+  at org.apache.hive.service.server.HiveServer2.main(HiveServer2.java:1149) [hive-service-3.1.0.jar:3.1.0]
+  at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method) ~[?:1.8.0_321]
+  at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62) ~[?:1.8.0_321]
+  at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43) ~[?:1.8.0_321]
+  at java.lang.reflect.Method.invoke(Method.java:498) ~[?:1.8.0_321]
+  at org.apache.hadoop.util.RunJar.run(RunJar.java:323) [hadoop-common-3.2.2.jar:?]
+  at org.apache.hadoop.util.RunJar.main(RunJar.java:236) [hadoop-common-3.2.2.jar:?]
+2023-07-12T10:58:50,517  INFO [main] server.HiveServer2: Shutting down HiveServer2
+2023-07-12T10:58:50,517  INFO [main] service.AbstractService: Service:ThriftBinaryCLIService is stopped.
+2023-07-12T10:58:50,517  INFO [main] service.AbstractService: Service:OperationManager is stopped.
+2023-07-12T10:58:50,517  INFO [main] service.AbstractService: Service:SessionManager is stopped.
+2023-07-12T10:58:50,517 DEBUG [main-SendThread(localhost:2181)] zookeeper.ClientCnxn: Reading reply sessionid:0x20006fef00b003c, packet:: clientPath:null serverPath:null finished:false header:: 1,1  replyHeader:: 1,38654706013,-114  request:: '/hiveserver2,#3139322e3136382e322e313438,v{s{1,s{'world,'anyone}},s{31,s{'auth,'}}},0  response::  
+2023-07-12T10:58:50,517  INFO [main] thrift.ThriftCLIService: Thrift server has stopped
+
+解决方案：
+由于ranger加入到hive配置目录中hiveserver2-site.xml：
+    <property>
+        <name>hive.security.authorization.enabled</name>
+        <value>true</value>
+    </property>
+
+导致hive开启kerberos认证模式连接zookeeper,而环境实际对接的zookeeper没有开启Kerberos认证。
+所以修改hive源码org.apache.hive.service.server.HiveServer2.java：
+/**
+   * ACLProvider for providing appropriate ACLs to CuratorFrameworkFactory
+   */
+  private final ACLProvider zooKeeperAclProvider = new ACLProvider() {
+
+    @Override
+    public List<ACL> getDefaultAcl() {
+      List<ACL> nodeAcls = new ArrayList<ACL>();
+      // ACLs for znodes on a non-kerberized cluster
+      // Create/Read/Delete/Write/Admin to the world
+      nodeAcls.addAll(Ids.OPEN_ACL_UNSAFE);
+      return nodeAcls;
+    }
+
+    @Override
+    public List<ACL> getAclForPath(String path) {
+      return getDefaultAcl();
+    }
+  };
+
