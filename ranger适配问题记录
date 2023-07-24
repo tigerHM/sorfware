@@ -18,11 +18,11 @@ WARN org.apache.ranger.admin.client.RangerAdminRESTClient: Error getting policie
 解决方案：
 401,404返回都是没有找到对应的用户,角色导致的。同时需要设置参数policy.download.auth.users允许下载策略的用户。
 在ranger-admin的ews/logs日志中可以找到实际请求的用户，比如hadoop。在设置页面将请求的用户添加到ranger管理中。
-在ranger角色管理页面中配置用户auditor、hadoop, Role选择Admin,并设置密码ranger123。
+在ranger角色管理页面中配置用户auditor、hadoop, Role选择Admin,并设置密码xxxx。
 在连接配置中加入policy.download.auth.users:auditor,hadoop
 
 通过命令获取policies：
-curl -Lku auditor:ranger123 -H "Accept: application/json" -H "Content-type:application/json" "http://xxxx:6080/service/plugins/secure/policies/download/xxxx"  > /etc/ranger/xxxx/policycache/hdfs_xxxxx.json
+curl -Lku auditor:xxxx -H "Accept: application/json" -H "Content-type:application/json" "http://xxxx:6080/service/plugins/secure/policies/download/xxxx"  > /etc/ranger/xxxx/policycache/hdfs_xxxxx.json
 
 
 3.报错内容：
