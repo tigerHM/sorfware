@@ -1,0 +1,33 @@
+helm 安装部署：
+前提：k8s集群已部署
+
+tar -zxvf ./helm-v2.16.9-linux-amd64.tar.gz -C /opt/helm
+
+cd /opt/helm
+cp -a ./linux-amd64/helm /usr/bin/helm
+
+准备配置：
+tiller_config.yaml：
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tiller
+  namespace: kube-system
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: tiller-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: tiller
+  namespace: kube-system
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: ""
+
+kubectl apply -f ./tiller_config.yaml
+
+helm init --service-account tiller --upgrade -i registry.cn-hangzhou.aliyuncs.com/google_containers/tiller:v2.16.9 --stable-repo-url https://kubernetes.oss-cn-hangzhou.aliyuncs.com/charts
+
