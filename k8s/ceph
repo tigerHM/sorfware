@@ -1,4 +1,5 @@
 Ceph是一个统一的分布式存储系统，设计初衷是提供较好的性能、可靠性和可扩展性。
+https://docs.ceph.com/en/quincy
 https://rook.io/docs/rook/v1.9/ceph-storage.html
 
 选用 Ceph 作为容器化存储理由如下：
