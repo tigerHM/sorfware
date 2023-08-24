@@ -1,0 +1,31 @@
+1.创建一个serveAccount spark并创建namespace spark-test,spark在ns下spark-test有所有权限
+create.yaml:
+## 创建Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: spark-test
+
+## 创建ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: spark
+  namespace: spark-test
+
+## 创建ClusterRoleBinding，将ServiceAccount与ClusterRole绑定
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: spark-test-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: spark
+  namespace: spark-test
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+
+
