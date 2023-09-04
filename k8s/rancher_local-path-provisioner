@@ -1,5 +1,7 @@
 rancher/local-path-provisioner
-参考文档：https://blog.csdn.net/wangxin123wangxin/article/details/123484830
+参考文档：
+https://www.ytool.cloud/k8s/storage/local-path-provisioner.html
+https://blog.csdn.net/wangxin123wangxin/article/details/123484830
 
 hostpath不支持动态扩容的缺陷,
 rancher/local-path-provisioner插件通过为每个PersistentVolumeClaim（PVC）创建一个本地目录，并将其挂载到Pod中，将本地磁盘作为持久化存储提供给应用程序。
