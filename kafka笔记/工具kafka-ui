@@ -1,6 +1,8 @@
 kafka-ui
 kafka常用监控工具有：kafka manager,kafka-ui等。
 kafka：kafka_2.12-3.5.1(kraft模式)
+Kafka with KRaft 
+官方文档：https://kafka.apache.org/documentation/#quickstart
 
 docker部署：
 docker pull docker.io/provectuslabs/kafka-ui:master 
