@@ -1,0 +1,8 @@
+kafka-ui
+kafka常用监控工具有：kafka manager,kafka-ui等。
+kafka：kafka_2.12-3.5.1(kraft模式)
+
+docker部署：
+docker pull docker.io/provectuslabs/kafka-ui:master 
+docker run -p 8918:8080 --name kafka-ui -e KAFKA_CLUSTERS_0_NAME=kafka_3.5.1 -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.2.xxx:9092,192.168.2.xxx:9092,192.168.2.xxx:9092 \
+-e TZ=Asia/Shanghai -e LANG=C.UTF-8 -e SERVER_SERVLET_CONTEXT_PATH="/" -e AUTH_TYPE="LOGIN_FORM" -e SPRING_SECURITY_USER_NAME=admin -e SPRING_SECURITY_USER_PASSWORD="xxxx" -d docker.io/provectuslabs/kafka-ui:master
