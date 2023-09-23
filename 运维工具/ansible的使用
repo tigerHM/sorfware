@@ -50,3 +50,6 @@ task.yml:
       file: path=/tmp/ansible_tmp state=directory mode=0777
 
 执行：ansible-playbook -i hosts文件配置路径(默认就是/etc/ansible/hosts) task.yml
+
+ansible-playbook编写结构：
+参考文章：https://www.jianshu.com/p/157ed21bf47d
