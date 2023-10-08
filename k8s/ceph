@@ -10,4 +10,6 @@ https://cloud.tencent.com/developer/article/2242349
 
 
 Ceph 部署实践：
-参考文档：https://zhuanlan.zhihu.com/p/619236201
+参考文档：
+https://zhuanlan.zhihu.com/p/619236201
+https://docs.ceph.com/en/nautilus/start/kube-helm/
