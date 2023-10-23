@@ -1,2 +1,6 @@
+Loki 是由 Grafana Labs 团队开发的，基于 Go 语言实现，是一个水平可扩展，高可用性，多租户的日志聚合系统。
+它的设计非常经济高效且易于操作，因为它不会为日志内容编制索引，而是为每个日志流配置一组标签。
+
 参考文章：
 https://blog.ligengxin.me/posts/minikube(k8s)-log-persistence/
+https://blog.csdn.net/u011943534/article/details/120871258
