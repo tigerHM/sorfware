@@ -1,1 +1,100 @@
 spark on k8s架构部署spark history server
+背景：
+spark on k8s架构运行的job日志需要去k8snode去查看。
+为方便查看日志、分析job需要配置spark HistoryServer。
+环境：hadoop3.3.1(kerberos认证)、spark3.2.4
+
+配置Dockerfile：
+##Dockerfile的同级创建hadoop、spark-conf分别存放hadoop的配置和spark的配置。
+ARG SPARK_BASE=harbor.local.com:5000/xxxx/spark-py:1.0
+FROM $SPARK_BASE
+ARG SPARK_HOME_ARG=/opt/spark
+ENV TIME_ZONE Asia/Shanghai
+user root
+RUN  mkdir -p  /opt/hadoop
+COPY hadoop/*  /opt/hadoop/
+COPY spark-conf/* $SPARK_CONF_DIR/
+ENV HADOOP_CONF_DIR /opt/hadoop
+RUN echo "deb [arch=amd64] http://mirrors.aliyun.com/ubuntu/ bionic main" > /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3B4FE6ACC0B21F32
+RUN sed -i s@/archive.ubuntu.com/@/mirrors.aliyun.com/@g /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime && echo $TIME_ZONE > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata 
+RUN  apt-get clean
+RUN  apt-get update
+RUN  apt-get -y install iputils-ping 
+RUN  apt-get -y install krb5-user
+注意：依赖镜像是由ubantu构建，根据实际情况更改。依赖镜像参考spark官网构建。
+
+配置spark-defaults.conf：
+spark.eventLog.enabled true
+spark.eventLog.dir hdfs://xxxx/xxxx/spark-logs
+spark.history.kerberos.enabled true 
+
+
+准备spark-history-deployment.yaml：
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-history-server
+  labels:
+    run: spark-history-server
+  namespace: default
+spec:
+  type: NodePort
+  ports:
+  - port: 18080
+    targetPort: 18080
+    protocol: TCP
+    name: http
+    nodePort: 30808
+  selector:
+    run: spark-history-server
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spark-history-server
+spec:
+  selector:
+    matchLabels:
+      run: spark-history-server
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: spark-history-server
+    spec:
+      containers:
+      - name: spark-history-server
+        image: harbor.local.com:5000/xxxx/spark-history:1.0
+        imagePullPolicy: Always
+        command: ["/bin/bash","-c"]
+        args: 
+          - |
+            kinit -kt /etc/security/keytabs/xxxx.keytab xxxx
+            /opt/spark/bin/spark-class org.apache.spark.deploy.history.HistoryServer
+        volumeMounts:
+        - mountPath: /etc/krb5.conf
+          name: krb5
+        - mountPath: /etc/security/keytabs
+          name: keytabs
+        ports:
+          - containerPort: 18080
+            name: http
+        env:
+        - name: SPARK_HISTORY_OPTS
+          value: "-Dspark.history.fs.logDirectory=hdfs://xxxx/xxxx/spark-logs"
+      volumes:
+      - name: krb5
+        hostPath:
+          path: /共享目录/etc/krb5.conf
+          type: File
+      - name: keytabs
+        hostPath:
+          path: /共享目录/etc/security/keytabs
+          type: Directory 
+      dnsPolicy: ClusterFirst
