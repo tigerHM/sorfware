@@ -1,0 +1,101 @@
+使用k8s部署sftp服务，使用NFS作为存储
+参考文章：https://blog.csdn.net/werewolf2017/article/details/109601442
+
+1.配置pv、pvc
+sftp-pv-pvc.yaml:
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-static-pvc
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-1g-pv
+spec:
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteMany
+  capacity:
+    storage: 1Gi
+  nfs:
+    path: /xxxx/xxxx/upload 
+    server: 192.168.x.x
+
+2.部署
+sftp-deployment.yaml：
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sftp
+spec:
+  replicas: 1 #可自行修改副本的个数
+  selector:
+    matchLabels:
+      app: sftp
+  template:
+    metadata:
+      labels:
+        app: sftp
+    spec:
+      containers:
+      - command: ["/entrypoint", "$(user):$(passwd):::$(path)"]
+        image: atmoz/sftp:latest
+        name: sftp
+        env:
+        - name: TZ
+          value: "CST-8"
+        - name: user
+          value: "sftp"
+        - name: passwd
+          value: "123456"
+        - name: path
+          value: "upload"
+        resources:
+          limits:
+            cpu: "1"
+            memory: 200Mi
+          requests:
+            cpu: "0.5"
+            memory: 100Mi
+        volumeMounts:
+        - mountPath: /etc/ssh/ssh_host_ed25519_key
+          name: ssh-host-ed25519-key
+        - mountPath: /etc/ssh/ssh_host_rsa_key
+          name: ssh-host-rsa-key
+        - name: nfs-static-pvc
+          mountPath: /home/sftp/upload
+      volumes:
+      - hostPath:
+          path: /etc/ssh/ssh_host_ed25519_key
+        name: ssh-host-ed25519-key
+      - hostPath:
+          path: /etc/ssh/ssh_host_rsa_key
+        name: ssh-host-rsa-key
+      - name: nfs-static-pvc
+        persistentVolumeClaim:
+          claimName: nfs-static-pvc 
+---
+# 根据需要创建Service Nodeport
+apiVersion: v1
+kind: Service
+metadata:
+  name: sftp
+  labels:
+    app: sftp
+spec:
+  type: NodePort
+  ports:
+  - port: 22
+    nodePort: 30022
+    targetPort: 22
+    protocol: TCP
+  selector:
+    app: sftp
