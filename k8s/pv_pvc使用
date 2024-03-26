@@ -1,0 +1,42 @@
+在Kubernetes（K8s）中，PV（Persistent Volume，持久化卷）和PVC（Persistent Volume Claim，持久化卷声明）是通过绑定机制实现存储资源的供给和需求对接的。这种绑定机制确保了
+Pod内的容器能够拥有持久化存储能力，即使在Pod重启、迁移时也能保持数据的连续性和一致性。
+PV是集群中由管理员配置的一段存储，它是集群中的资源，类似于节点资源。它是底层网络存储的抽象，将存储定义为一种“资源”。而PVC则是用户对存储的请求，类似于Pod消耗节点资源，
+PVC则消耗PV资源。PVC可以申请特定的存储空间和访问模式。
+
+PV和PVC的绑定过程主要有两种方式：
+动态绑定：当创建了一个PVC并指定了存储类时，如果集群中有合适的PV可用（即与PVC规格匹配并且未被绑定），则Kubernetes会自动将两者绑定在一起。如果没有可用PV，则可能根据
+存储类触发动态供应流程创建新的PV。
+静态绑定：管理员可以手动创建PV，并为其设置特定的标签或者注解。然后在创建PVC时，可以明确指定需要匹配的标签，这样Kubernetes会在已有PV中寻找符合标签条件的PV进行绑定。
+无论是动态绑定还是静态绑定，PV和PVC的绑定都是Kubernetes自动完成的，用户只需要定义好PVC和PV的规格和需求，Kubernetes就会负责找到合适的PV进行绑定，从而满足Pod的持久化存储需求。
+
+静态绑定案例：
+apiVersion: v1  
+kind: PersistentVolume  
+metadata:  
+  name: my-pv  
+  labels:  
+    type: nfs  
+spec:  
+  storageClassName: "" # 不指定存储类，因为我们使用静态绑定  
+  capacity:  
+    storage: 1Gi  
+  accessModes:  
+    - ReadWriteOnce  
+  nfs:  
+    path: /path/to/nfs/share  
+    server: nfs-server.example.com
+---
+apiVersion: v1  
+kind: PersistentVolumeClaim  
+metadata:  
+  name: my-pvc  
+spec:  
+  storageClassName: "" # 不指定存储类，因为我们使用静态绑定  
+  accessModes:  
+    - ReadWriteOnce  
+  resources:  
+    requests:  
+      storage: 1Gi  
+  selector:  
+    matchLabels:  
+      type: nfs # 这里使用之前定义的PV上的标签来匹配
