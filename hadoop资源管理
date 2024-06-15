@@ -1,0 +1,216 @@
+hadoop资源管理
+一、HDFS配额(quota)配置
+在 Hadoop 中，HDFS 提供了配额（Quota）功能，用于限制和管理文件系统中的空间使用量和文件数量。这是确保系统资源被合理使用的重要工具，特别是在多用户和多团队共享一个 HDFS 集群的情况下。
+HDFS 配额主要分为两种类型：
+空间配额（Space Quota）：限制目录及其子目录下使用的存储空间总量。
+名称配额（Name Quota）：限制目录及其子目录下的文件和目录的总数量。
+
+1. 设置空间配额（Space Quota）
+空间配额限制一个目录及其所有子目录的总存储空间使用量。配额值可以使用 KB、MB、GB 或者 TB 为单位。
+命令格式：
+hdfs dfsadmin -setSpaceQuota <quota_value> <directory_path>
+示例：
+# 设置 /user/hadoop 目录及其子目录的空间配额为 100 GB
+hdfs dfsadmin -setSpaceQuota 100g /user/hadoop
+
+2. 设置名称配额（Name Quota）
+名称配额限制一个目录及其所有子目录中的文件和目录的总数量。
+命令格式：
+hdfs dfsadmin -setQuota <quota_value> <directory_path>
+示例：
+# 设置 /user/hadoop 目录及其子目录的名称配额为 10000 个
+hdfs dfsadmin -setQuota 10000 /user/hadoop
+
+3. 查看配额
+要查看一个目录的配额设置，可以使用 hdfs dfs 命令。
+命令格式：
+hdfs dfs -count -q <directory_path>
+示例：
+# 查看 /user/hadoop 目录的配额和使用情况
+hdfs dfs -count -q /user/hadoop
+在结果的输出中：
+QUOTA：当前的名称配额。
+REM_QUOTA：剩余的名称配额。
+SPACE_QUOTA：当前的空间配额。
+REM_SPACE_QUOTA：剩余的空间配额。
+DIR_COUNT：目录数量。
+FILE_COUNT：文件数量。
+CONTENT_SIZE：当前目录及其子目录占用的空间大小。
+FILE_NAME：目录路径。
+
+5. 检查和管理配额
+在实际管理中，可以使用以下命令来进行配额的检查和调整：
+检查当前目录及其子目录的配额使用情况：
+hdfs dfs -count -q -h <directory_path>
+调整配额：
+如果一个目录的使用量接近配额限制，可以通过增加配额来调整。例如，将配额从100 GB增加到200 GB：
+hdfs dfsadmin -setSpaceQuota 200g /user/hadoop
+
+***注意***
+管理权限
+配额的继承性：配额是递归的
+配额修改实时生效：
+配额超限处理：任何新的写操作（包括文件的创建和追加）都将失败
+***注意***
+
+在 Hadoop 的 YARN（Yet Another Resource Negotiator）框架中，资源调度是通过队列的方式进行的。YARN 允许通过配置不同的队列，为不同的用户、组或应用程序分配和管理资源。
+这种队列机制帮助实现多租户资源管理，保证资源公平分配和集群的高效利用。
+YARN 队列资源配置的基本概念
+YARN 提供了两种主要的调度器：容量调度器（Capacity Scheduler） 和 公平调度器（Fair Scheduler）。两者的队列资源配置方式略有不同。
+容量调度器（Capacity Scheduler）：
+它基于队列的容量来管理资源分配，每个队列被分配一定比例的集群资源。
+默认情况下，资源按照比例分配给各队列，未使用的资源可以被其他队列使用。
+公平调度器（Fair Scheduler）：
+它基于公平共享的理念，即使在高负载下，确保所有应用程序能获得大致相等的资源。
+队列可以配置权重，权重越高，队列在资源争夺中获得的优先级越高。
+二、YARN队列配置
+配置 YARN 的队列资源通常需要编辑 YARN 的配置文件 yarn-site.xml 和 capacity-scheduler.xml（或 fair-scheduler.xml），这些文件位于 Hadoop 配置目录中（通常是 $HADOOP_CONF_DIR）。
+1. 配置容量调度器（Capacity Scheduler）
+步骤：
+编辑 yarn-site.xml：
+确保在 yarn-site.xml 中启用容量调度器。
+<property>
+  <name>yarn.resourcemanager.scheduler.class</name>
+  <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+</property>
+  
+编辑 capacity-scheduler.xml：
+在 capacity-scheduler.xml 文件中，配置各个队列的资源容量和其他属性。
+<property>
+  <name>yarn.scheduler.capacity.root.queues</name>
+  <value>default,production,dev</value>
+</property>
+
+<!-- 配置 default 队列 -->
+<property>
+  <name>yarn.scheduler.capacity.root.default.capacity</name>
+  <value>20</value>
+</property>
+<property>
+  <name>yarn.scheduler.capacity.root.default.maximum-capacity</name>
+  <value>50</value>
+</property>
+
+<!-- 配置 production 队列 -->
+<property>
+  <name>yarn.scheduler.capacity.root.production.capacity</name>
+  <value>50</value>
+</property>
+<property>
+  <name>yarn.scheduler.capacity.root.production.maximum-capacity</name>
+  <value>100</value>
+</property>
+
+<!-- 配置 dev 队列 -->
+<property>
+  <name>yarn.scheduler.capacity.root.dev.capacity</name>
+  <value>30</value>
+</property>
+<property>
+  <name>yarn.scheduler.capacity.root.dev.maximum-capacity</name>
+  <value>50</value>
+</property>
+
+  在这个配置中：
+yarn.scheduler.capacity.root.queues 指定了根队列下的子队列名称。
+每个子队列有两个关键属性：
+capacity：定义队列的默认容量，表示该队列在资源分配中的基础比例。
+maximum-capacity：定义队列可以使用的最大容量，表示队列在资源可用时能争取到的最大资源比例。
+高级配置：
+可以为队列配置更多的属性，例如，minimum-user-limit-percent、user-limit-factor 等，以控制资源的细粒度分配。
+  
+2. 配置公平调度器（Fair Scheduler）
+步骤：
+编辑 yarn-site.xml：
+确保在 yarn-site.xml 中启用公平调度器。
+<property>
+  <name>yarn.resourcemanager.scheduler.class</name>
+  <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+</property>
+
+编辑 fair-scheduler.xml：
+在 fair-scheduler.xml 文件中，配置各个队列的资源共享和权重。
+<allocations>
+  <queue name="root">
+    <queue name="default">
+      <weight>1.0</weight>
+    </queue>
+    <queue name="production">
+      <weight>2.0</weight>
+      <minResources>1024 mb, 1 vcore</minResources>
+      <maxRunningApps>10</maxRunningApps>
+    </queue>
+    <queue name="dev">
+      <weight>1.0</weight>
+      <minResources>512 mb, 1 vcore</minResources>
+      <maxRunningApps>5</maxRunningApps>
+    </queue>
+  </queue>
+</allocations>
+在这个配置中：
+
+weight：定义了队列的权重，权重越高的队列在资源分配时优先级越高。
+minResources：定义了队列能够保证的最小资源量。
+maxRunningApps：限制队列中同时运行的最大应用数量。
+动态队列：
+
+公平调度器支持动态创建队列，即在 fair-scheduler.xml 中未配置的队列可以在运行时自动创建，前提是它们被请求。
+3. 队列资源配置的示例
+假设我们有一个集群，需要为不同的团队和工作流配置资源。我们可以使用以下方式来配置队列。
+容量调度器示例：
+<!-- capacity-scheduler.xml -->
+<property>
+  <name>yarn.scheduler.capacity.root.queues</name>
+  <value>default,engineering,marketing</value>
+</property>
+
+<property>
+  <name>yarn.scheduler.capacity.root.engineering.capacity</name>
+  <value>40</value>
+</property>
+<property>
+  <name>yarn.scheduler.capacity.root.engineering.maximum-capacity</name>
+  <value>60</value>
+</property>
+
+<property>
+  <name>yarn.scheduler.capacity.root.marketing.capacity</name>
+  <value>30</value>
+</property>
+<property>
+  <name>yarn.scheduler.capacity.root.marketing.maximum-capacity</name>
+  <value>40</value>
+</property>
+  
+公平调度器示例：
+<!-- fair-scheduler.xml -->
+<allocations>
+  <queue name="root">
+    <queue name="default">
+      <weight>1.0</weight>
+    </queue>
+    <queue name="engineering">
+      <weight>2.0</weight>
+      <minResources>4096 mb, 4 vcores</minResources>
+      <maxResources>8192 mb, 8 vcores</maxResources>
+    </queue>
+    <queue name="marketing">
+      <weight>1.5</weight>
+      <minResources>2048 mb, 2 vcores</minResources>
+      <maxResources>4096 mb, 4 vcores</maxResources>
+    </queue>
+  </queue>
+</allocations>
+4. 验证和监控配置
+在完成队列配置后，建议通过以下步骤验证和监控配置：
+重新启动 YARN ResourceManager：
+在修改 yarn-site.xml 或 capacity-scheduler.xml / fair-scheduler.xml 后，重启 ResourceManager 以使配置生效。
+hadoop-daemon.sh start resourcemanager
+
+检查配置是否生效：
+通过 YARN ResourceManager 的 Web UI 检查配置是否正确应用。
+访问 http://<ResourceManager-Host>:8088 查看队列的资源分配情况和应用程序状态。
+
+使用 CLI 命令查看队列状态：
+使用 yarn 命令行工具检查队列的当前状态和资源使用情况。
+yarn queue -status <queue_name>
