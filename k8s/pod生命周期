@@ -1,3 +1,7 @@
+pod的生命周期
+参考文档：
+https://www.cnblogs.com/yanjieli/p/11798222.html
+
 官方文档：
 探针三种类型：存活、就绪、启动
 https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
