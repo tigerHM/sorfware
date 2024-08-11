@@ -53,3 +53,14 @@ task.yml:
 
 ansible-playbook编写结构：
 参考文章：https://www.jianshu.com/p/157ed21bf47d
+
+
+
+
+kubeasz运行ansible脚本报错，如下信息：
+[WARNING]: Skipping plugin (/usr/lib/python3/dist-packages/ansible/plugins/filter/core.py) as it seems to be invalid: cannot import name 'environmentfilter' from 'jinja2.filters'
+FAILED! => {"msg": "The conditional check 'OS_HARDEN|bool' failed. The error was: No filter named 'bool' found.\n\nThe error appears to be in ...
+原因：ansible依赖python,运行环境python3的jinja2为3.x，版本导致报错，需要降级。
+解决方法：
+pip3 install jinja2==2.11.2
+pip3 install markupsafe==1.1.1
